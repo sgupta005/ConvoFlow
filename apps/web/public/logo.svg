@@ -1,0 +1,8 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Convo Flow mark" style="color:#006239">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+    <circle cx="32" cy="32" r="22"/>
+    <path d="M16 26c6-6 20-6 28 0"/>
+    <path d="M16 32c6-6 20-6 28 0"/>
+    <path d="M16 38c6-6 20-6 28 0"/>
+  </g>
+</svg>
