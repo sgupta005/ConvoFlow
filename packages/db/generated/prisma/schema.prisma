@@ -15,9 +15,9 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String            @id @default(cuid())
   name          String?
-  email         String          @unique
+  email         String            @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
@@ -25,10 +25,10 @@ model User {
   // Optional for WebAuthn support
   Authenticator Authenticator[]
   workspaces    WorkspaceMember[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
 }
- 
+
 model Account {
   userId            String
   type              String
@@ -41,33 +41,33 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([provider, providerAccountId])
 }
- 
+
 model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@id([identifier, token])
 }
- 
+
 // Optional for WebAuthn support
 model Authenticator {
   credentialID         String  @unique
@@ -78,27 +78,28 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([userId, credentialID])
 }
 
 model Workspace {
-  id        String  @id @default(cuid())
+  id        String            @id @default(cuid())
   name      String
   image     String?
   members   WorkspaceMember[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
 }
 
 model WorkspaceMember {
-  id           String   @id @default(cuid())
-  role         String   // owner, admin, member
-  userId       String
-  workspaceId  String
-  user         User      @relation(fields: [userId], references: [id])
-  workspace    Workspace @relation(fields: [workspaceId], references: [id])
+  id          String    @id @default(cuid())
+  role        String // owner, admin, member
+  userId      String
+  workspaceId String
+  user        User      @relation(fields: [userId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+
   @@unique([userId, workspaceId])
 }
