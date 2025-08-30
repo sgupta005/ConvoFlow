@@ -1,0 +1,131 @@
+'use client';
+
+import * as React from 'react';
+import { ChevronsUpDown, Plus, Building2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import Image from 'next/image';
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from '@workspace/ui/components/dropdown-menu';
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from '@workspace/ui/components/sidebar';
+import { Workspace } from '@workspace/contracts';
+
+export function WorkspaceSwitcher({ workspaces }: { workspaces: Workspace[] }) {
+  const { isMobile } = useSidebar();
+  const router = useRouter();
+  const params = useParams();
+  const currentWorkspaceId = params.id as string;
+
+  // Find current workspace or default to first one
+  const activeWorkspace =
+    workspaces.find((w) => w.id === currentWorkspaceId) || workspaces[0];
+
+  const handleWorkspaceSwitch = (workspace: Workspace) => {
+    if (workspace.id !== currentWorkspaceId) {
+      router.push(`/workspace/${workspace.id}/dashboard`);
+    }
+  };
+
+  const handleCreateWorkspace = () => {
+    router.push('/workspace/create');
+  };
+
+  if (!activeWorkspace) {
+    return null;
+  }
+
+  return (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            >
+              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                {activeWorkspace.image ? (
+                  <Image
+                    src={activeWorkspace.image}
+                    alt={`${activeWorkspace.name} logo`}
+                    width={16}
+                    height={16}
+                    className="size-4 rounded-sm"
+                  />
+                ) : (
+                  <Building2 className="size-4" />
+                )}
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">
+                  {activeWorkspace.name}
+                </span>
+                <span className="truncate text-xs text-sidebar-foreground/70">
+                  Workspace
+                </span>
+              </div>
+              <ChevronsUpDown className="ml-auto" />
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            align="start"
+            side={isMobile ? 'bottom' : 'right'}
+            sideOffset={4}
+          >
+            <DropdownMenuLabel className="text-muted-foreground text-xs">
+              Workspaces
+            </DropdownMenuLabel>
+            {workspaces.map((workspace, index) => (
+              <DropdownMenuItem
+                key={workspace.id}
+                onClick={() => handleWorkspaceSwitch(workspace)}
+                className="gap-2 p-2"
+              >
+                <div className="flex size-6 items-center justify-center rounded-md border">
+                  {workspace.image ? (
+                    <Image
+                      src={workspace.image}
+                      alt={`${workspace.name} logo`}
+                      width={14}
+                      height={14}
+                      className="size-3.5 rounded-sm shrink-0"
+                    />
+                  ) : (
+                    <Building2 className="size-3.5 shrink-0" />
+                  )}
+                </div>
+                {workspace.name}
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="gap-2 p-2"
+              onClick={handleCreateWorkspace}
+            >
+              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                <Plus className="size-4" />
+              </div>
+              <div className="text-muted-foreground font-medium">
+                Add workspace
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  );
+}
