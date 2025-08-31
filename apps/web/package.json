@@ -12,11 +12,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@workspace/redis": "workspace:*",
     "@workspace/contracts": "workspace:*",
-    "@auth/prisma-adapter": "^2.10.0",
-    "@hookform/resolvers": "^5.2.1",
     "@workspace/db": "workspace:*",
     "@workspace/ui": "workspace:*",
+    "@auth/prisma-adapter": "^2.10.0",
+    "@hookform/resolvers": "^5.2.1",
     "lucide-react": "^0.475.0",
     "next": "^15.4.5",
     "next-auth": "5.0.0-beta.29",

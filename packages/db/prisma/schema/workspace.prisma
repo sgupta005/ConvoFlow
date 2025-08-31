@@ -1,0 +1,21 @@
+model Workspace {
+  id        String            @id @default(cuid())
+  name      String
+  image     String?
+  members   WorkspaceMember[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  meetings Meeting[]
+}
+
+model WorkspaceMember {
+  id          String    @id @default(cuid())
+  role        String // owner, admin, member
+  userId      String
+  workspaceId String
+  user        User      @relation(fields: [userId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@unique([userId, workspaceId])
+}

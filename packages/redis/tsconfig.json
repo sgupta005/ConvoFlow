@@ -7,7 +7,7 @@
     "rootDir": "src",
     "baseUrl": ".",
     "paths": {
-      "@workspace/db/*": ["./src/*"]
+      "@workspace/redis/*": ["./src/*"]
     }
   },
   "include": ["src"],

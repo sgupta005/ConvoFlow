@@ -12,9 +12,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
+
 import {
   SidebarMenu,
   SidebarMenuButton,

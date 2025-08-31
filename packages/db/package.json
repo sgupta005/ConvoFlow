@@ -1,22 +1,24 @@
 {
   "name": "@workspace/db",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev --skip-generate"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.4.1",
+  "prisma": {
+    "schema": "./prisma/schema/"
+  },
   "dependencies": {
     "@workspace/contracts": "workspace:*",
-    "@prisma/client": "^6.15.0",
-    "@types/node": "^20.19.9"
+    "@prisma/client": "^6.15.0"
   },
   "devDependencies": {
     "@workspace/typescript-config": "workspace:*",
-    "prisma": "^6.15.0"
+    "prisma": "^6.15.0",
+    "@types/node": "^20.19.9"
   },
   "exports": {
     ".": "./src/index.ts"

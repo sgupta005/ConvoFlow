@@ -1,4 +1,4 @@
-import { prisma } from '@workspace/db';
+import { prisma } from '../client';
 import type { CreateWorkspaceSchema } from '@workspace/contracts';
 
 export async function createWorkspace(data: CreateWorkspaceSchema) {
