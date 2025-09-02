@@ -10,3 +10,9 @@ export const BULL = {
   attempts: Number(process.env.BOT_SPAWN_ATTEMPTS ?? 3),
   backoffMs: Number(process.env.BOT_SPAWN_BACKOFF_MS ?? 5_000),
 };
+
+export const STREAMS = {
+  transcriptsMaxLen: Number(process.env.TRANSCRIPTS_MAXLEN ?? 10_000), // approx
+  blockMs: Number(process.env.TRANSCRIPTS_BLOCK_MS ?? 5_000), // XREADGROUP block
+  batchCount: Number(process.env.TRANSCRIPTS_BATCH ?? 50),
+};

@@ -11,6 +11,13 @@ export async function getRedis(): Promise<RedisClientType> {
   return client;
 }
 
+export async function getRedisDup(): Promise<RedisClientType> {
+  const client = await getRedis();
+  const dup = client.duplicate();
+  await dup.connect();
+  return dup;
+}
+
 export async function closeRedis() {
   if (client) {
     await client.quit();

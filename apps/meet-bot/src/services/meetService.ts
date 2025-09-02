@@ -1,6 +1,7 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { executablePath } from 'puppeteer';
+import { appendTranscriptChunk } from '@workspace/redis';
 
 const stealthPlugin = StealthPlugin();
 stealthPlugin.enabledEvasions.delete('iframe.contentWindow');
@@ -9,6 +10,7 @@ puppeteer.use(stealthPlugin);
 
 export class MeetService {
   async joinGoogleMeet(
+    meetingId: string,
     meetUrl: string,
     botName: string = 'ConvoFlow Bot'
   ): Promise<void> {
@@ -67,9 +69,22 @@ export class MeetService {
       await new Promise((resolve) => setTimeout(resolve, 10000));
 
       const captions = await page.$('div[class="ygicle VbkSUe"]');
+      const speaker = await page.$('div[class="NWpY1d"]');
       if (captions) {
         const captionText = await captions.evaluate((el) => el.textContent);
-        console.log('Captions detected:', captionText);
+        const speakerText = await speaker?.evaluate((el) => el.textContent);
+        appendTranscriptChunk({
+          meetingId: meetingId,
+          speaker: speakerText ?? undefined,
+          text: captionText!,
+          ts: Date.now(),
+        });
+        console.log(
+          'Captions detected: ',
+          captionText,
+          '/nSpeaker: ',
+          speakerText
+        );
       }
 
       await page.screenshot({

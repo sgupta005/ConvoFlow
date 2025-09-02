@@ -13,7 +13,11 @@ export class BotWorker {
     console.log(`Processing bot spawn for meeting: ${payload.meetingId}`);
 
     try {
-      await this.meetService.joinGoogleMeet(payload.meetUrl, 'ConvoFlow Bot');
+      await this.meetService.joinGoogleMeet(
+        payload.meetingId,
+        payload.meetUrl,
+        'ConvoFlow Bot'
+      );
 
       console.log(`Bot successfully spawned for meeting: ${payload.meetingId}`);
     } catch (error) {
