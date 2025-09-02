@@ -20,6 +20,7 @@ export function getBotQueueEvents(): QueueEvents {
   if (_events) return _events;
   _events = new QueueEvents(keys.queue.botSpawns, {
     connection: getRedisConnectionConfig(),
+    prefix: APP_PREFIX,
   });
   _events.on('completed', ({ jobId }) =>
     console.log(`[bots] completed ${jobId}`)
@@ -53,6 +54,7 @@ export function makeBotWorker(
     {
       connection: getRedisConnectionConfig(),
       concurrency: BULL.concurrency,
+      prefix: APP_PREFIX,
     }
   );
 }
