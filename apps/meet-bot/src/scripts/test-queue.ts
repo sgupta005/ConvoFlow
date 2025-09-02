@@ -7,7 +7,7 @@ async function testQueue() {
 
   const testPayload = {
     meetingId: 'test-meeting-' + Date.now(),
-    meetUrl: 'https://meet.google.com/oes-mkxx-oax', // Replace with a real meeting URL for testing
+    meetUrl: 'https://meet.google.com/ibt-qffp-hwt', // Replace with a real meeting URL for testing
     requestedByUserId: 'test-user-123',
   };
 
