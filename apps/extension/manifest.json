@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "ConvoFlow - Meeting Transcription",
+  "version": "1.0.0",
+  "description": "Real-time transcription for Google Meet and Zoom meetings",
+  "permissions": ["tabCapture", "activeTab", "storage"],
+  "host_permissions": ["https://meet.google.com/*", "https://*.zoom.us/*"],
+  "background": {
+    "service_worker": "src/background.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://meet.google.com/*",
+        "https://*.zoom.us/j/*",
+        "https://*.zoom.us/wc/*"
+      ],
+      "js": ["src/content.ts"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "src/popup/popup.html"
+  }
+}

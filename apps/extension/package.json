@@ -1,0 +1,24 @@
+{
+  "name": "convoflow-extension",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch --mode development",
+    "build": "vite build",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@workspace/contracts": "workspace:*",
+    "@workspace/ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.0-beta.28",
+    "@tailwindcss/vite": "^4.1.11",
+    "@types/chrome": "^0.0.287",
+    "@types/node": "^24.3.0",
+    "@workspace/typescript-config": "workspace:*",
+    "tailwindcss": "^4.1.11",
+    "typescript": "5.7.3",
+    "vite": "^5.4.11"
+  }
+}
