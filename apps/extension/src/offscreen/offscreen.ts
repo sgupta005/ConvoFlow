@@ -1,3 +1,10 @@
+import {
+  ClientMessage,
+  ServerMessage,
+  ServerMessageSchema,
+  AUDIO_STREAM_CONFIG,
+} from '@workspace/contracts';
+
 interface OffscreenMessage {
   target: string;
   type: string;
@@ -14,15 +21,7 @@ interface ChromeTabAudioConstraints {
   video: boolean;
 }
 
-interface WebSocketMessage {
-  type: string;
-  sessionId?: string;
-  chunkCount?: number;
-  duration?: number;
-}
-
-const WEBSOCKET_URL = 'ws://localhost:8080';
-const CHUNK_INTERVAL_MS = 500; // Send audio chunks every 500ms
+const WEBSOCKET_URL = `ws://localhost:${AUDIO_STREAM_CONFIG.WEBSOCKET_PORT}`;
 
 let recorder: MediaRecorder | undefined;
 let activeStreams: MediaStream[] = [];
@@ -64,8 +63,14 @@ function connectWebSocket(): Promise<WebSocket> {
 
     ws.onmessage = (event) => {
       try {
-        const data: WebSocketMessage = JSON.parse(event.data);
-        handleWebSocketMessage(data);
+        const rawData = JSON.parse(event.data);
+        const result = ServerMessageSchema.safeParse(rawData);
+
+        if (result.success) {
+          handleWebSocketMessage(result.data);
+        } else {
+          console.error('Invalid message format from server:', result.error);
+        }
       } catch (error) {
         console.error('Failed to parse WebSocket message:', error);
       }
@@ -78,20 +83,18 @@ function connectWebSocket(): Promise<WebSocket> {
   });
 }
 
-function handleWebSocketMessage(data: WebSocketMessage): void {
-  switch (data.type) {
+function handleWebSocketMessage(message: ServerMessage): void {
+  switch (message.type) {
     case 'session-started':
-      sessionId = data.sessionId;
+      sessionId = message.sessionId;
       console.log(`Recording session started: ${sessionId}`);
       break;
     case 'session-stopped':
       console.log(
-        `Recording session stopped: ${data.sessionId} | Chunks: ${data.chunkCount} | Duration: ${data.duration}s`
+        `Recording session stopped: ${message.sessionId} | Chunks: ${message.chunkCount} | Duration: ${message.duration}s`
       );
       sessionId = undefined;
       break;
-    default:
-      console.log('Unknown WebSocket message:', data);
   }
 }
 
@@ -107,7 +110,8 @@ async function startRecording(streamId: string): Promise<void> {
     websocket = await connectWebSocket();
 
     // Start a new recording session
-    websocket.send(JSON.stringify({ type: 'start-session' }));
+    const startMessage: ClientMessage = { type: 'start-session' };
+    websocket.send(JSON.stringify(startMessage));
 
     // Get tab audio stream
     const tabConstraints: ChromeTabAudioConstraints = {
@@ -162,7 +166,7 @@ async function startRecording(streamId: string): Promise<void> {
 
     // Start recording with streaming
     recorder = new MediaRecorder(destination.stream, {
-      mimeType: 'audio/webm',
+      mimeType: AUDIO_STREAM_CONFIG.MIME_TYPE,
     });
 
     // Send each audio chunk to WebSocket server
@@ -177,7 +181,8 @@ async function startRecording(streamId: string): Promise<void> {
     recorder.onstop = (): void => {
       // Send stop-session message
       if (websocket?.readyState === WebSocket.OPEN) {
-        websocket.send(JSON.stringify({ type: 'stop-session' }));
+        const stopMessage: ClientMessage = { type: 'stop-session' };
+        websocket.send(JSON.stringify(stopMessage));
       }
 
       recorder = undefined;
@@ -189,7 +194,7 @@ async function startRecording(streamId: string): Promise<void> {
     };
 
     // Start recording with timeslice to get regular chunks
-    recorder.start(CHUNK_INTERVAL_MS);
+    recorder.start(AUDIO_STREAM_CONFIG.CHUNK_INTERVAL_MS);
     window.location.hash = 'recording';
 
     console.log(`Recording started, streaming to ${WEBSOCKET_URL}`);

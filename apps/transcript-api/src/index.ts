@@ -1,8 +1,14 @@
 import { WebSocketServer, WebSocket } from 'ws';
 import { createWriteStream, existsSync, mkdirSync, WriteStream } from 'fs';
 import { join } from 'path';
+import {
+  ClientMessage,
+  ClientMessageSchema,
+  ServerMessage,
+  AUDIO_STREAM_CONFIG,
+} from '@workspace/contracts';
 
-const PORT = 8080;
+const PORT = AUDIO_STREAM_CONFIG.WEBSOCKET_PORT;
 const RECORDINGS_DIR = join(process.cwd(), 'recordings');
 
 // Ensure recordings directory exists
@@ -45,8 +51,14 @@ wss.on('connection', (socket) => {
     } else {
       // Handle text message (control messages)
       try {
-        const data = JSON.parse(message.toString());
-        handleControlMessage(socket, data);
+        const rawData = JSON.parse(message.toString());
+        const result = ClientMessageSchema.safeParse(rawData);
+
+        if (result.success) {
+          handleControlMessage(socket, result.data);
+        } else {
+          console.error('Invalid message format:', result.error);
+        }
       } catch (error) {
         console.error('Failed to parse message:', error);
       }
@@ -75,16 +87,13 @@ wss.on('connection', (socket) => {
   });
 });
 
-function handleControlMessage(
-  socket: WebSocket,
-  data: { type: string; sessionId?: string }
-) {
-  switch (data.type) {
+function handleControlMessage(socket: WebSocket, message: ClientMessage) {
+  switch (message.type) {
     case 'start-session': {
       const sessionId =
-        data.sessionId ||
+        message.sessionId ||
         `recording-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-      const filename = `${sessionId}.webm`;
+      const filename = `${sessionId}.${AUDIO_STREAM_CONFIG.MIME_TYPE.split('/')[1]}`;
       const filepath = join(RECORDINGS_DIR, filename);
 
       const writeStream = createWriteStream(filepath);
@@ -99,7 +108,11 @@ function handleControlMessage(
       console.log(`Started session: ${sessionId}`);
       console.log(`Saving to: ${filepath}`);
 
-      socket.send(JSON.stringify({ type: 'session-started', sessionId }));
+      const response: ServerMessage = {
+        type: 'session-started',
+        sessionId,
+      };
+      socket.send(JSON.stringify(response));
       break;
     }
 
@@ -113,22 +126,18 @@ function handleControlMessage(
           `Stopped session: ${session.id} | Duration: ${duration}s | Chunks: ${session.chunkCount}`
         );
 
-        socket.send(
-          JSON.stringify({
-            type: 'session-stopped',
-            sessionId: session.id,
-            chunkCount: session.chunkCount,
-            duration,
-          })
-        );
+        const response: ServerMessage = {
+          type: 'session-stopped',
+          sessionId: session.id,
+          chunkCount: session.chunkCount,
+          duration,
+        };
+        socket.send(JSON.stringify(response));
 
         sessions.delete(socket);
       }
       break;
     }
-
-    default:
-      console.log('Unknown control message:', data);
   }
 }
 
