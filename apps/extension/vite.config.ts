@@ -11,7 +11,9 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        popup: resolve(__dirname, 'src/popup/popup.html'),
+        popup: resolve(__dirname, 'src/popup.html'),
+        offscreen: resolve(__dirname, 'src/offscreen.html'),
+        permission: resolve(__dirname, 'src/permission.html'),
       },
     },
   },
@@ -19,5 +21,8 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, 'src'),
     },
+  },
+  worker: {
+    format: 'es',
   },
 });
