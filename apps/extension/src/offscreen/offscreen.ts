@@ -14,9 +14,20 @@ interface ChromeTabAudioConstraints {
   video: boolean;
 }
 
+interface WebSocketMessage {
+  type: string;
+  sessionId?: string;
+  chunkCount?: number;
+  duration?: number;
+}
+
+const WEBSOCKET_URL = 'ws://localhost:8080';
+const CHUNK_INTERVAL_MS = 500; // Send audio chunks every 500ms
+
 let recorder: MediaRecorder | undefined;
-let data: Blob[] = [];
 let activeStreams: MediaStream[] = [];
+let websocket: WebSocket | undefined;
+let sessionId: string | undefined;
 
 chrome.runtime.onMessage.addListener(
   async (message: OffscreenMessage): Promise<void> => {
@@ -37,6 +48,53 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
+function connectWebSocket(): Promise<WebSocket> {
+  return new Promise((resolve, reject) => {
+    const ws = new WebSocket(WEBSOCKET_URL);
+
+    ws.onopen = () => {
+      console.log('WebSocket connected');
+      resolve(ws);
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      reject(new Error('Failed to connect to WebSocket server'));
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data: WebSocketMessage = JSON.parse(event.data);
+        handleWebSocketMessage(data);
+      } catch (error) {
+        console.error('Failed to parse WebSocket message:', error);
+      }
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket disconnected');
+      websocket = undefined;
+    };
+  });
+}
+
+function handleWebSocketMessage(data: WebSocketMessage): void {
+  switch (data.type) {
+    case 'session-started':
+      sessionId = data.sessionId;
+      console.log(`Recording session started: ${sessionId}`);
+      break;
+    case 'session-stopped':
+      console.log(
+        `Recording session stopped: ${data.sessionId} | Chunks: ${data.chunkCount} | Duration: ${data.duration}s`
+      );
+      sessionId = undefined;
+      break;
+    default:
+      console.log('Unknown WebSocket message:', data);
+  }
+}
+
 async function startRecording(streamId: string): Promise<void> {
   if (recorder?.state === 'recording') {
     throw new Error('Called startRecording while recording is in progress.');
@@ -45,6 +103,12 @@ async function startRecording(streamId: string): Promise<void> {
   await stopAllStreams();
 
   try {
+    // Connect to WebSocket server first
+    websocket = await connectWebSocket();
+
+    // Start a new recording session
+    websocket.send(JSON.stringify({ type: 'start-session' }));
+
     // Get tab audio stream
     const tabConstraints: ChromeTabAudioConstraints = {
       audio: {
@@ -96,27 +160,27 @@ async function startRecording(streamId: string): Promise<void> {
     micSource.connect(micGain);
     micGain.connect(destination);
 
-    // Start recording
+    // Start recording with streaming
     recorder = new MediaRecorder(destination.stream, {
       mimeType: 'audio/webm',
     });
+
+    // Send each audio chunk to WebSocket server
     recorder.ondataavailable = (event: BlobEvent): void => {
-      data.push(event.data);
+      if (event.data.size > 0 && websocket?.readyState === WebSocket.OPEN) {
+        event.data.arrayBuffer().then((buffer) => {
+          websocket?.send(buffer);
+        });
+      }
     };
+
     recorder.onstop = (): void => {
-      const blob = new Blob(data, { type: 'audio/webm' });
-      const url = URL.createObjectURL(blob);
+      // Send stop-session message
+      if (websocket?.readyState === WebSocket.OPEN) {
+        websocket.send(JSON.stringify({ type: 'stop-session' }));
+      }
 
-      // Create temporary link element to trigger download
-      const downloadLink = document.createElement('a');
-      downloadLink.href = url;
-      downloadLink.download = `recording-${new Date().toISOString()}.webm`;
-      downloadLink.click();
-
-      // Cleanup
-      URL.revokeObjectURL(url);
       recorder = undefined;
-      data = [];
 
       chrome.runtime.sendMessage({
         type: 'recording-stopped',
@@ -124,16 +188,20 @@ async function startRecording(streamId: string): Promise<void> {
       });
     };
 
-    recorder.start();
+    // Start recording with timeslice to get regular chunks
+    recorder.start(CHUNK_INTERVAL_MS);
     window.location.hash = 'recording';
 
-    // chrome.runtime.sendMessage({
-    //   type: 'update-icon',
-    //   target: 'service-worker',
-    //   recording: true,
-    // });
+    console.log(`Recording started, streaming to ${WEBSOCKET_URL}`);
   } catch (error) {
     console.error('Error starting recording:', error);
+
+    // Close WebSocket if recording fails
+    if (websocket) {
+      websocket.close();
+      websocket = undefined;
+    }
+
     chrome.runtime.sendMessage({
       type: 'recording-error',
       target: 'popup',
@@ -153,11 +221,13 @@ async function stopRecording(): Promise<void> {
   await stopAllStreams();
   window.location.hash = '';
 
-  //   chrome.runtime.sendMessage({
-  //     type: 'update-icon',
-  //     target: 'service-worker',
-  //     recording: false,
-  //   });
+  // Close WebSocket connection after a short delay to ensure final messages are sent
+  setTimeout(() => {
+    if (websocket) {
+      websocket.close();
+      websocket = undefined;
+    }
+  }, 1000);
 }
 
 async function stopAllStreams(): Promise<void> {

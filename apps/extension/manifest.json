@@ -6,16 +6,19 @@
   "minimum_chrome_version": "116",
   "action": {
     "default_icon": "public/icons/icon.svg",
-    "default_popup": "src/popup.html"
+    "default_popup": "src/popup/popup.html"
   },
   "background": {
-    "service_worker": "src/service-worker.ts"
+    "service_worker": "src/background/service-worker.ts"
   },
   "permissions": ["tabCapture", "offscreen", "activeTab"],
   "host_permissions": ["https://meet.google.com/*", "https://*.zoom.us/*"],
   "web_accessible_resources": [
     {
-      "resources": ["src/permission.html", "src/offscreen.html"],
+      "resources": [
+        "src/permission/permission.html",
+        "src/offscreen/offscreen.html"
+      ],
       "matches": ["<all_urls>"]
     }
   ]

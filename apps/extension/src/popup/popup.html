@@ -1,131 +1,71 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ConvoFlow</title>
-    <link rel="stylesheet" href="./popup.css" />
+    <style>
+      body {
+        width: 200px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      button {
+        padding: 10px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        width: 100%;
+        opacity: 0; /* Start with 0 opacity */
+        transition: opacity 0.3s ease-in-out; /* Smooth transition for opacity */
+        position: absolute; /* Prevent layout shifting */
+      }
+
+      #startRecord {
+        background: #4caf50;
+        color: white;
+        display: none;
+      }
+
+      #stopRecord {
+        background: #f44336;
+        color: white;
+        display: none;
+      }
+
+      /* New class for visible buttons */
+      button.visible {
+        opacity: 1;
+      }
+
+      /* Add a container for the buttons to maintain layout */
+      .button-container {
+        position: relative;
+        height: 38px; /* Height of your buttons */
+        margin: 10px 0;
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      #permissionStatus {
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 4px;
+        display: none;
+        background-color: #fff3e0;
+        color: #ef6c00;
+      }
+    </style>
   </head>
-  <body class="bg-primary text-foreground font-sans antialiased">
-    <div class="flex flex-col min-h-[380px] p-5">
-      <!-- Header -->
-      <header class="flex items-center gap-2.5 mb-6">
-        <div
-          class="flex items-center justify-center w-9 h-9 bg-gradient-to-br from-primary to-chart-3 rounded-lg text-white"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 64 64"
-            xmlns="http://www.w3.org/2000/svg"
-            class="text-white"
-          >
-            <g
-              fill="none"
-              stroke="currentColor"
-              stroke-width="4"
-              stroke-linecap="round"
-            >
-              <circle cx="32" cy="32" r="22" />
-              <path d="M16 26c6-6 20-6 28 0" />
-              <path d="M16 32c6-6 20-6 28 0" />
-              <path d="M16 38c6-6 20-6 28 0" />
-            </g>
-          </svg>
-        </div>
-        <h1 class="text-lg font-semibold tracking-tight">ConvoFlow</h1>
-      </header>
-
-      <!-- Status Section -->
-      <section class="bg-card border border-border rounded-xl p-4 mb-4">
-        <div class="flex items-center gap-2.5 mb-3" id="status-indicator">
-          <span
-            class="status-dot w-2.5 h-2.5 rounded-full bg-muted-foreground transition-colors duration-200"
-          ></span>
-          <span class="text-sm font-medium text-foreground" id="status-text"
-            >Checking...</span
-          >
-        </div>
-
-        <div class="hidden items-center gap-2" id="meeting-info">
-          <div
-            class="inline-flex items-center px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide rounded-full bg-accent text-accent-foreground"
-            id="platform-badge"
-          ></div>
-          <span
-            class="text-xs text-muted-foreground font-mono"
-            id="meeting-id"
-          ></span>
-        </div>
-      </section>
-
-      <!-- Recording Timer -->
-      <div
-        class="hidden flex-col items-center p-5 mb-4 bg-destructive/10 border border-destructive/20 rounded-xl"
-        id="timer-section"
-      >
-        <div
-          class="text-4xl font-bold font-mono tracking-wide text-foreground"
-          id="timer-display"
-        >
-          00:00
-        </div>
-        <div
-          class="text-[11px] uppercase tracking-widest text-muted-foreground mt-1"
-        >
-          Recording Duration
-        </div>
-      </div>
-
-      <!-- Main Action Button -->
-      <button
-        class="action-button flex items-center justify-center gap-2.5 w-full py-3.5 px-5 text-[15px] font-semibold text-primary-foreground bg-gradient-to-br from-primary to-chart-3 border-none rounded-xl cursor-pointer transition-all duration-200 hover:opacity-90 hover:-translate-y-0.5 hover:shadow-lg disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
-        id="action-button"
-        disabled
-      >
-        <span class="flex items-center justify-center" id="button-icon">
-          <svg
-            class="icon-record"
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <circle cx="10" cy="10" r="8" />
-          </svg>
-          <svg
-            class="icon-stop hidden"
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <rect x="4" y="4" width="12" height="12" rx="2" />
-          </svg>
-        </span>
-        <span id="button-text">Start Recording</span>
-      </button>
-
-      <!-- Instructions -->
-      <div
-        class="flex-1 flex items-center justify-center p-5 mt-4"
-        id="instructions"
-      >
-        <p
-          class="text-center text-[13px] text-muted-foreground leading-relaxed"
-        >
-          Open a Google Meet or Zoom meeting to start transcribing.
-        </p>
-      </div>
-
-      <!-- Footer -->
-      <footer
-        class="mt-auto pt-4 text-center text-[11px] text-muted-foreground"
-      >
-        <span>ConvoFlow v1.0.0</span>
-      </footer>
+  <body>
+    <div id="permissionStatus"></div>
+    <div class="button-container">
+      <button id="startRecord">Start Recording</button>
+      <button id="stopRecord">Stop Recording</button>
     </div>
-
     <script type="module" src="./popup.ts"></script>
   </body>
 </html>
