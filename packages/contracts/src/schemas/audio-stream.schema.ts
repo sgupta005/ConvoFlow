@@ -28,9 +28,17 @@ export const SessionStoppedMessageSchema = z.object({
   duration: z.number(),
 });
 
+export const TranscriptMessageSchema = z.object({
+  type: z.literal('transcript'),
+  sessionId: z.string(),
+  text: z.string(),
+  isFinal: z.boolean(),
+});
+
 export const ServerMessageSchema = z.discriminatedUnion('type', [
   SessionStartedMessageSchema,
   SessionStoppedMessageSchema,
+  TranscriptMessageSchema,
 ]);
 
 // Session metadata
@@ -47,6 +55,7 @@ export type ClientMessage = z.infer<typeof ClientMessageSchema>;
 
 export type SessionStartedMessage = z.infer<typeof SessionStartedMessageSchema>;
 export type SessionStoppedMessage = z.infer<typeof SessionStoppedMessageSchema>;
+export type TranscriptMessage = z.infer<typeof TranscriptMessageSchema>;
 export type ServerMessage = z.infer<typeof ServerMessageSchema>;
 
 export type Session = z.infer<typeof SessionSchema>;
