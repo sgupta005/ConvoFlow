@@ -1,12 +1,9 @@
+import { Prisma } from 'generated/prisma/client';
 import { prisma } from '../client';
-import type { CreateMeetingSchema } from '@workspace/contracts';
 
-export async function createMeeting(data: CreateMeetingSchema) {
+export async function createMeeting(data: Prisma.MeetingCreateInput) {
   const meeting = await prisma.meeting.create({
-    data: {
-      title: data.name,
-      workspaceId: data.workspaceId,
-    },
+    data,
   });
   return meeting;
 }
