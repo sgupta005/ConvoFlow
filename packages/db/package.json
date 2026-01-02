@@ -2,23 +2,31 @@
   "name": "@workspace/db",
   "version": "1.0.0",
   "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsc",
     "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev --skip-generate"
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:test": "tsx scripts/test-database.ts"
   },
   "prisma": {
     "schema": "./prisma/schema/"
   },
   "dependencies": {
-    "@workspace/contracts": "workspace:*",
-    "@prisma/client": "^6.15.0"
+    "@prisma/adapter-neon": "^7.2.0",
+    "@prisma/client": "^7.2.0",
+    "@workspace/contracts": "workspace:*"
   },
   "devDependencies": {
+    "@types/node": "^20.19.9",
     "@workspace/typescript-config": "workspace:*",
-    "prisma": "^6.15.0",
-    "@types/node": "^20.19.9"
+    "dotenv": "^16.4.5",
+    "prisma": "^7.2.0",
+    "tsx": "^4.7.0"
   },
   "exports": {
     ".": "./src/index.ts"

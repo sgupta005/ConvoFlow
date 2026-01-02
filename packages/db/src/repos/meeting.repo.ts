@@ -4,7 +4,7 @@ import type { CreateMeetingSchema } from '@workspace/contracts';
 export async function createMeeting(data: CreateMeetingSchema) {
   const meeting = await prisma.meeting.create({
     data: {
-      name: data.name,
+      title: data.name,
       workspaceId: data.workspaceId,
     },
   });
