@@ -1,3 +1,3 @@
-- [ ] Migrate to next 16
+- [x] Migrate to next 16
 - [ ] Migrate auth.js to better-auth
 - [ ] Create UI

@@ -3,7 +3,7 @@
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Field, FieldError, FieldLabel } from '@workspace/ui/components/field';
-import { toast } from 'sonner';
+import { toast } from '@workspace/ui/components/sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
