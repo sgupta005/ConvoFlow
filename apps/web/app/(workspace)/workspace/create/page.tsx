@@ -1,4 +1,3 @@
-import { CreateWorkspaceForm } from '@/features/workspace/components/create-workspace-form';
 import {
   Card,
   CardContent,
@@ -7,6 +6,7 @@ import {
   CardTitle,
 } from '@workspace/ui/components/card';
 import { auth } from '@/auth';
+import { CreateWorkspaceForm } from '@/features/workspace/components/create-workspace-form';
 
 export default async function CreateWorkspacePage() {
   const session = await auth();

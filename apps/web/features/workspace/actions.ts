@@ -16,6 +16,10 @@ export async function createWorkspaceAction(workspace: CreateWorkspaceSchema) {
     return { success: true, data: newWorkspace };
   } catch (error) {
     console.error(error);
-    return { success: false, error: 'Failed to create workspace' };
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to create workspace',
+    };
   }
 }

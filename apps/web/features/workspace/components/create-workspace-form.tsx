@@ -1,19 +1,12 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 import { Button } from '@workspace/ui/components/button';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { Field, FieldError, FieldLabel } from '@workspace/ui/components/field';
+import { toast } from 'sonner';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import {
   createWorkspaceSchema,
   type CreateWorkspaceSchema,
@@ -35,40 +28,42 @@ export function CreateWorkspaceForm({ userId }: { userId: string }) {
   async function onSubmit(values: CreateWorkspaceSchema) {
     const result = await createWorkspaceAction(values);
 
-    if (result.success && result.data)
+    if (result.success && result.data) {
+      toast.success('Workspace created successfully!');
       router.push(`/workspace/${result.data.id}/dashboard`);
+    } else {
+      toast.error(result.error);
+    }
   }
 
   const isLoading = form.formState.isSubmitting;
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Workspace name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter workspace name"
-                  disabled={isLoading}
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                This will be the name of your workspace.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <form
+      id="create-workspace-form"
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="space-y-4"
+    >
+      <Controller
+        name="name"
+        control={form.control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel htmlFor="create-workspace-form-name">Name</FieldLabel>
+            <Input
+              {...field}
+              id="create-workspace-form-name"
+              aria-invalid={fieldState.invalid}
+              placeholder="Workspace name"
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          Create workspace
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        Create workspace
+      </Button>
+    </form>
   );
 }

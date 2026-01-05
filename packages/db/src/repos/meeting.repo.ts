@@ -1,4 +1,4 @@
-import { Prisma } from 'generated/prisma/client';
+import { Prisma } from '../../generated/prisma/client';
 import { prisma } from '../client';
 
 export async function createMeeting(data: Prisma.MeetingCreateInput) {
