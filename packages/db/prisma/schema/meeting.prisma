@@ -1,18 +1,18 @@
 model Meeting {
-  id          String       @id @default(cuid())
+  id          String    @id @default(cuid())
   workspaceId String
-  workspace   Workspace    @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
 
-  title       String
-  is_live     Boolean      @default(false)
+  title   String
+  is_live Boolean @default(false)
 
   transcript  String?
   summary     String?
   actionItems ActionItem[]
 
-  startTime   DateTime?
-  endTime     DateTime?
+  startTime DateTime?
+  endTime   DateTime?
 
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

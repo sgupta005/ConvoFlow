@@ -5,11 +5,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@workspace/ui/components/card';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import { CreateWorkspaceForm } from '@/features/workspace/components/create-workspace-form';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export default async function CreateWorkspacePage() {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session) redirect('/login');
   return (
     <Card className="flex w-md mx-auto">
       <CardHeader>

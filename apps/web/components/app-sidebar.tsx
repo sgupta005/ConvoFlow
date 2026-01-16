@@ -11,17 +11,17 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@workspace/ui/components/sidebar';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
+import { headers } from 'next/headers';
 import { getUserWorkspaces } from '@workspace/db';
 
 export async function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    redirect('/login');
-  }
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session) redirect('/login');
 
   const workspaces = await getUserWorkspaces(session.user.id);
 

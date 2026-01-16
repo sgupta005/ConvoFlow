@@ -1,10 +1,13 @@
 import { redirect } from 'next/navigation';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import { getUserFirstWorkspace } from '@workspace/db';
+import { headers } from 'next/headers';
 
 export default async function LoginRedirectPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect('/login');
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session) redirect('/login');
 
   const ws = await getUserFirstWorkspace(session.user.id);
 
