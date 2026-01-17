@@ -1,0 +1,39 @@
+{
+  "name": "extension-plasmo",
+  "displayName": "Extension plasmo",
+  "version": "0.0.1",
+  "description": "A basic Plasmo extension.",
+  "author": "Shivam Gupta <shivamgupta05.dev@gmail.com>",
+  "scripts": {
+    "dev": "plasmo dev",
+    "build": "plasmo build",
+    "package": "plasmo package",
+    "postinstall": "node scripts/patch.js"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
+    "@workspace/typescript-config": "workspace:*",
+    "@workspace/ui": "workspace:*",
+    "better-auth": "^1.4.10",
+    "lucide-react": "^0.475.0",
+    "plasmo": "0.90.5",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "tailwindcss": "4.1.18"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
+    "@types/chrome": "0.0.258",
+    "@types/node": "20.11.5",
+    "@types/react": "19.2.8",
+    "@types/react-dom": "19.2.3",
+    "postcss": "8.4.33",
+    "prettier": "3.2.4",
+    "typescript": "5.3.3"
+  },
+  "manifest": {
+    "host_permissions": [
+      "http://localhost:3000/*"
+    ]
+  }
+}

@@ -2,9 +2,8 @@
 
 import { Button } from '@workspace/ui/components/button';
 import { authClient } from '@/lib/auth-client';
-import Image from 'next/image';
 
-export function LoginWithGoogle():React.ReactNode {
+export function LoginWithGoogle() {
   return (
     <Button
       type="button"
@@ -12,7 +11,7 @@ export function LoginWithGoogle():React.ReactNode {
       className="w-full"
       onClick={() => authClient.signIn.social({ provider: 'google' })}
     >
-      <Image src="/google-logo.png" alt="Google logo" width={20} height={20} />
+      <img src="/google-logo.png" alt="Google logo" width={20} height={20} />
       Login with Google
     </Button>
   );

@@ -1,16 +1,31 @@
-import { cn } from '@workspace/ui/lib/utils';
-import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
-import { LoginWithGoogle } from './login-with-google';
-import Link from 'next/link';
+"use client"
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<'form'>):React.ReactNode {
+import { authClient } from "@/lib/auth-client"
+import { Button } from "@workspace/ui/components/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@workspace/ui/components/card"
+import { Checkbox } from "@workspace/ui/components/checkbox"
+import { Input } from "@workspace/ui/components/input"
+import { Label } from "@workspace/ui/components/label"
+import { toast } from "@workspace/ui/components/sonner"
+import { Loader2 } from "lucide-react"
+import { useState } from "react"
+import { cn } from "@workspace/ui/lib/utils"
+import { LoginWithGoogle } from "./login-with-google"
+const { signIn } = authClient
+
+export function Login({
+  setPage
+}: {
+  setPage: (page: "home" | "sign-in" | "sign-up") => void
+}) {
   return (
-    <form className={cn('flex flex-col gap-6', className)} {...props}>
+    <form className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -44,12 +59,12 @@ export function LoginForm({
         </div>
         <LoginWithGoogle />
       </div>
-      <div className="text-center text-sm">
+      {/* <div className="text-center text-sm">
         Don&apos;t have an account?{' '}
         <Link href="/signup" className="underline underline-offset-4">
           Sign up
         </Link>
-      </div>
+      </div> */}
     </form>
-  );
+  )
 }
