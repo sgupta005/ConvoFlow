@@ -4,7 +4,7 @@ import { Button } from '@workspace/ui/components/button';
 import { authClient } from '@/lib/auth-client';
 import Image from 'next/image';
 
-export function LoginWithGoogle():React.ReactNode {
+export function LoginWithGoogle() {
   return (
     <Button
       type="button"
