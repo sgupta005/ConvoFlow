@@ -1,11 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { ChevronsUpDown, Plus, Building2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useParams } from 'next/navigation';
-import Image from 'next/image';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,24 +9,33 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from '@workspace/ui/components/sidebar';
-import { Workspace } from '@workspace/contracts';
+import { ChevronsUpDown, Plus, Building2 } from 'lucide-react';
+import { notFound, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import Image from 'next/image';
 
-export function WorkspaceSwitcher({ workspaces }: { workspaces: Workspace[] }) {
+import { Workspace } from '@workspace/contracts';
+import { CreateWorkspaceDialog } from './create-workspace-dialog';
+
+export function WorkspaceSwitcher({ workspaces, userId }: { workspaces: Workspace[], userId: string }) {
+  const [showDialog, setShowDialog] = React.useState(false)
+
   const { isMobile } = useSidebar();
   const router = useRouter();
   const params = useParams();
+
   const currentWorkspaceId = params.id as string;
 
   // Find current workspace or default to first one
   const activeWorkspace =
-    workspaces.find((w) => w.id === currentWorkspaceId) || workspaces[0];
+    workspaces.find((w) => w.id === currentWorkspaceId);
+  if (!activeWorkspace) return notFound();
 
   const handleWorkspaceSwitch = (workspace: Workspace) => {
     if (workspace.id !== currentWorkspaceId) {
@@ -39,18 +43,10 @@ export function WorkspaceSwitcher({ workspaces }: { workspaces: Workspace[] }) {
     }
   };
 
-  const handleCreateWorkspace = () => {
-    router.push('/workspace/create');
-  };
-
-  if (!activeWorkspace) {
-    return null;
-  }
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
@@ -114,7 +110,7 @@ export function WorkspaceSwitcher({ workspaces }: { workspaces: Workspace[] }) {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="gap-2 p-2"
-              onClick={handleCreateWorkspace}
+              onSelect={() => setShowDialog(true)}
             >
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                 <Plus className="size-4" />
@@ -125,6 +121,11 @@ export function WorkspaceSwitcher({ workspaces }: { workspaces: Workspace[] }) {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <CreateWorkspaceDialog
+          userId={userId}
+          showDialog={showDialog}
+          setShowDialog={setShowDialog}
+        />
       </SidebarMenuItem>
     </SidebarMenu>
   );

@@ -18,33 +18,24 @@ import { getUserWorkspaces } from '@workspace/db';
 export async function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
+
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  if (!session) redirect('/login');
+  if (!session?.user) redirect('/login');
 
   const workspaces = await getUserWorkspaces(session.user.id);
-
-  if (workspaces.length === 0) {
-    redirect('/workspace/create');
-  }
-
-  const userData = {
-    name: session.user.name || 'User',
-    email: session.user.email || '',
-    avatar: session.user.image || '/avatars/default.jpg',
-  };
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <WorkspaceSwitcher workspaces={workspaces} />
+        <WorkspaceSwitcher workspaces={workspaces} userId={session.user.id} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={userData} />
+        <NavUser user={session.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

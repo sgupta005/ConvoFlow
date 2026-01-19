@@ -10,7 +10,7 @@ export function LoginWithGoogle() {
       type="button"
       variant="outline"
       className="w-full"
-      onClick={() => authClient.signIn.social({ provider: 'google' })}
+      onClick={() => authClient.signIn.social({ provider: 'google', callbackURL: '/auth/redirect' })}
     >
       <Image src="/google-logo.png" alt="Google logo" width={20} height={20} />
       Login with Google
