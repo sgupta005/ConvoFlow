@@ -15,7 +15,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@workspace/ui/components/sidebar';
-import { ChevronsUpDown, Plus, Building2 } from 'lucide-react';
+import { Badge } from '@workspace/ui/components/badge';
+import { ChevronsUpDown, Plus } from 'lucide-react';
 import { notFound, useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
@@ -61,9 +62,7 @@ export function WorkspaceSwitcher({ workspaces, userId }: { workspaces: Workspac
                     height={16}
                     className="size-4 rounded-sm"
                   />
-                ) : (
-                  <Building2 className="size-4" />
-                )}
+                ) : activeWorkspace.name.charAt(0).toUpperCase()}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
@@ -100,11 +99,12 @@ export function WorkspaceSwitcher({ workspaces, userId }: { workspaces: Workspac
                       height={14}
                       className="size-3.5 rounded-sm shrink-0"
                     />
-                  ) : (
-                    <Building2 className="size-3.5 shrink-0" />
-                  )}
+                  ) : workspace.name.charAt(0).toUpperCase()}
                 </div>
                 {workspace.name}
+                {workspace.is_default && (
+                  <Badge variant="outline">Default</Badge>
+                )}
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
