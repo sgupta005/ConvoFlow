@@ -16,8 +16,9 @@ import { headers } from 'next/headers';
 import { getUserWorkspaces } from '@workspace/db';
 
 export async function AppSidebar({
+  workspaceId,
   ...props
-}: React.ComponentProps<typeof Sidebar>) {
+}: React.ComponentProps<typeof Sidebar> & { workspaceId: string }) {
 
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -32,7 +33,7 @@ export async function AppSidebar({
         <WorkspaceSwitcher workspaces={workspaces} userId={session.user.id} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain />
+        <NavMain workspaceId={workspaceId} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={session.user} />

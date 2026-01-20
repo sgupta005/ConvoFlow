@@ -1,15 +1,17 @@
 import { prisma } from '../client';
 import type { CreateWorkspaceSchema } from '@workspace/contracts';
+import { WorkspaceRole } from '../../generated/prisma/client';
 
 export async function createWorkspace(data: CreateWorkspaceSchema) {
   const workspace = await prisma.workspace.create({
     data: {
       name: data.name,
       image: data.image ?? null,
+      is_default: data.isDefault,
       members: {
         create: {
           userId: data.userId,
-          role: 'admin',
+          role: WorkspaceRole.OWNER,
         },
       },
     },
@@ -17,14 +19,18 @@ export async function createWorkspace(data: CreateWorkspaceSchema) {
   return workspace;
 }
 
-export function getUserFirstWorkspace(userId: string) {
+export function getUserDefaultWorkspace(userId: string) {
   return prisma.workspace.findFirst({
     where: {
+      is_default: true,
       members: {
-        some: { userId },
+        some: {
+          userId,
+          role: WorkspaceRole.OWNER
+        }
       },
-    },
-  });
+    }
+  })
 }
 
 export function getUserWorkspaces(userId: string) {
