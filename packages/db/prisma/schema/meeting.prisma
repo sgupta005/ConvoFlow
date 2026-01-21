@@ -1,7 +1,7 @@
 model Meeting {
   id          String    @id @default(cuid())
   workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   title   String
   is_live Boolean @default(false)

@@ -19,7 +19,7 @@ export async function createWorkspace(data: CreateWorkspaceSchema) {
   return workspace;
 }
 
-export function getUserDefaultWorkspace(userId: string) {
+export async function getUserDefaultWorkspace(userId: string) {
   return prisma.workspace.findFirst({
     where: {
       is_default: true,
@@ -33,7 +33,7 @@ export function getUserDefaultWorkspace(userId: string) {
   })
 }
 
-export function getUserWorkspaces(userId: string) {
+export async function getUserWorkspaces(userId: string) {
   return prisma.workspace.findMany({
     where: {
       members: {
@@ -44,4 +44,28 @@ export function getUserWorkspaces(userId: string) {
       createdAt: 'desc',
     },
   });
+}
+
+export async function getWorkspaceById(id: string) {
+  return prisma.workspace.findUnique({
+    where: {
+      id
+    }
+  })
+}
+
+export async function deleteWorkspace(id: string) {
+  return prisma.workspace.delete({
+    where: {
+      id
+    }
+  })
+}
+
+export async function checkUserOwnsWorkspace(workspaceId: string, userId: string) {
+  const workspaceMember = await prisma.workspaceMember.findFirst({
+    where:
+      { workspaceId, userId, role: WorkspaceRole.OWNER }
+  })
+  return !!workspaceMember;
 }
