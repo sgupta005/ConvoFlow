@@ -24,16 +24,22 @@ export default async function Page({ params }: {
       <div>
         <div className="flex items-center gap-4 mb-2">
           <h1 className="text-2xl font-semibold tracking-tight">{workspace.name}</h1>
-          {workspace.is_default && (
+          {workspace.is_default ? (
             <Tooltip>
               <TooltipTrigger>
-                <Badge variant="secondary" className="text-md px-3">Default</Badge>
+                <Badge variant="secondary" className="text-md px-3">Default Workspace</Badge>
               </TooltipTrigger>
               <TooltipContent>
                 All your meetings get added to this workspace by default.
               </TooltipContent>
             </Tooltip>
-          )}
+          ) :
+            <MakeDefaultButton
+              workspaceName={workspace.name}
+              workspaceId={workspace.id}
+              userId={session.session.userId}
+            />
+          }
         </div>
         <p className="text-muted-foreground text-sm">
           Manage your workspace settings
@@ -53,12 +59,6 @@ export default async function Page({ params }: {
               workspaceId={workspace.id}
               currentName={workspace.name}
               userId={session.session.userId}
-            />
-            <MakeDefaultButton
-              workspaceName={workspace.name}
-              workspaceId={workspace.id}
-              userId={session.session.userId}
-              isDefault={workspace.is_default}
             />
           </CardContent>
         </Card>

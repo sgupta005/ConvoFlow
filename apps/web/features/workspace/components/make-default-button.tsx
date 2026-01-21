@@ -10,10 +10,9 @@ interface MakeDefaultButtonProps {
   workspaceName: string
   workspaceId: string
   userId: string
-  isDefault: boolean
 }
 
-export function MakeDefaultButton({ workspaceName, workspaceId, userId, isDefault }: MakeDefaultButtonProps) {
+export function MakeDefaultButton({ workspaceName, workspaceId, userId, }: MakeDefaultButtonProps) {
   const [isPending, startTransition] = useTransition();
 
   async function handleMakeDefault() {
@@ -22,12 +21,8 @@ export function MakeDefaultButton({ workspaceName, workspaceId, userId, isDefaul
     })
   }
 
-  if (isDefault) {
-    return null
-  }
-
   return (
-    <Button variant="outline" onClick={handleMakeDefault} disabled={isPending}>
+    <Button variant="outline" className='mr-0 ml-auto' onClick={handleMakeDefault} disabled={isPending}>
       {isPending && <Spinner data-icon='inline-start' />} Make Default
     </Button>
   )
