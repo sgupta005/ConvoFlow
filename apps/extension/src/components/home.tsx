@@ -3,8 +3,10 @@ import { Button } from "@workspace/ui/components/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@workspace/ui/components/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
 import { Alert, AlertDescription } from "@workspace/ui/components/alert";
+
 import type { Session } from "@/lib/auth-client";
 import { authClient } from "@/lib/auth-client";
+
 import { Logo } from "./logo"
 import { useRecording } from "@/hooks/use-recording";
 
@@ -90,9 +92,8 @@ export function Home({ session }: { session: Session }) {
               <Button
                 size="lg"
                 variant={isRecording ? "destructive" : "default"}
-                className={`w-24 h-24 rounded-full transition-all duration-300 ${
-                  isRecording ? 'animate-pulse' : ''
-                }`}
+                className={`w-24 h-24 rounded-full transition-all duration-300 ${isRecording ? 'animate-pulse' : ''
+                  }`}
                 onClick={isRecording ? stopRecording : startRecording}
                 disabled={isLoading}
               >
@@ -115,8 +116,8 @@ export function Home({ session }: { session: Session }) {
                 {isLoading
                   ? 'Please wait...'
                   : isRecording
-                  ? 'Recording in progress'
-                  : 'Ready to record'}
+                    ? 'Recording in progress'
+                    : 'Ready to record'}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
                 {isRecording
@@ -132,16 +133,15 @@ export function Home({ session }: { session: Session }) {
       <div className="mt-auto pt-4 border-t border-border">
         <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <span
-            className={`w-2 h-2 rounded-full ${
-              isRecording ? 'bg-red-500' : canRecord ? 'bg-green-500' : 'bg-yellow-500'
-            }`}
+            className={`w-2 h-2 rounded-full ${isRecording ? 'bg-red-500' : canRecord ? 'bg-green-500' : 'bg-yellow-500'
+              }`}
           />
           <span>
             {isRecording
               ? 'Recording'
               : canRecord
-              ? 'Ready'
-              : 'Waiting for meeting'}
+                ? 'Ready'
+                : 'Waiting for meeting'}
           </span>
         </div>
       </div>

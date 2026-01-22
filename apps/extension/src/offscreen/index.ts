@@ -1,6 +1,6 @@
 import {
-  ClientMessage,
-  ServerMessage,
+  type ClientMessage,
+  type ServerMessage,
   ServerMessageSchema,
   AUDIO_STREAM_CONFIG,
 } from '@workspace/contracts';
@@ -51,17 +51,17 @@ function connectWebSocket(): Promise<WebSocket> {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(WEBSOCKET_URL);
 
-    ws.onopen = () => {
+    ws.onopen = (): void => {
       console.log('WebSocket connected');
       resolve(ws);
     };
 
-    ws.onerror = (error) => {
+    ws.onerror = (error): void => {
       console.error('WebSocket error:', error);
       reject(new Error('Failed to connect to WebSocket server'));
     };
 
-    ws.onmessage = (event) => {
+    ws.onmessage = (event): void => {
       try {
         const rawData = JSON.parse(event.data);
         const result = ServerMessageSchema.safeParse(rawData);
@@ -76,7 +76,7 @@ function connectWebSocket(): Promise<WebSocket> {
       }
     };
 
-    ws.onclose = () => {
+    ws.onclose = (): void => {
       console.log('WebSocket disconnected');
       websocket = undefined;
     };

@@ -32,6 +32,10 @@ dist/
 # plasmo - https://www.plasmo.com
 .plasmo
 
+# Generated offscreen script (built from src/offscreen/index.ts)
+assets/offscreen.js
+assets/offscreen.js.map
+
 # bpp - http://bpp.browser.market/
 keys.json
 

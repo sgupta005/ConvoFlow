@@ -1,15 +1,14 @@
 {
-  "extends": "@workspace/typescript-config/base.json",
+  "extends": "plasmo/templates/tsconfig.base",
+  "exclude": ["node_modules"],
+  "include": [".plasmo/index.d.ts", "./**/*.ts", "./**/*.tsx"],
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "outDir": "dist",
-    "rootDir": "src",
-    "baseUrl": ".",
-    "lib": ["ES2022", "DOM"],
-    "types": ["chrome"]
-  },
-  "include": ["src", "../extension-plasmo/src/background/messages"],
-  "exclude": ["node_modules", "dist"]
+    "paths": {
+      "@/*": ["./src/*"],
+      "@workspace/ui/*": ["../../packages/ui/src/*"],
+      "@workspace/contracts": ["../../packages/contracts/src/index.ts"]
+    },
+    "strict": true,
+    "baseUrl": "."
+  }
 }
-
