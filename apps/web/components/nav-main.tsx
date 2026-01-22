@@ -22,6 +22,7 @@ import {
 } from '@workspace/ui/components/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { SearchMeeting } from '@/features/meetings/components/search-meeting';
 
 function defaultNavItems(workspaceId: string) {
   return [
@@ -93,6 +94,8 @@ export function NavMain({ workspaceId }: { workspaceId: string }) {
               {item.items && item.items.length > 0 && (
                 <CollapsibleContent>
                   <SidebarMenuSub>
+                    {item.title === 'Meetings' && <SearchMeeting />
+                    }
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>

@@ -9,7 +9,7 @@
     "lib": ["ES2022", "DOM"],
     "types": ["chrome"]
   },
-  "include": ["src"],
+  "include": ["src", "../extension-plasmo/src/background/messages"],
   "exclude": ["node_modules", "dist"]
 }
 

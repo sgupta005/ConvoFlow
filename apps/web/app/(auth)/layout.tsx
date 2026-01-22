@@ -6,7 +6,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-4 p-6 md:p-10 min-h-svh">
+    <div className="flex flex-col gap-4 p-4 md:px-12 md:py-8 min-h-svh">
       <div className="flex justify-center gap-2 md:justify-start">
         <a href="#" className="flex items-center gap-2 font-medium">
           <Image src="/logo.svg" alt="ConvoFlow" width={32} height={32} />

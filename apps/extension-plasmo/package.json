@@ -1,8 +1,8 @@
 {
-  "name": "extension-plasmo",
-  "displayName": "Extension plasmo",
+  "name": "ConvoFlow - Meeting Transcription",
+  "displayName": "ConvoFlow",
   "version": "0.0.1",
-  "description": "A basic Plasmo extension.",
+  "description": "Real-time transcription for Google Meet and Zoom meetings.",
   "author": "Shivam Gupta <shivamgupta05.dev@gmail.com>",
   "scripts": {
     "dev": "plasmo dev",
@@ -11,7 +11,9 @@
     "postinstall": "node scripts/patch.js"
   },
   "dependencies": {
+    "@plasmohq/messaging": "^0.7.2",
     "@tailwindcss/postcss": "^4.1.18",
+    "@workspace/contracts": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "@workspace/ui": "workspace:*",
     "better-auth": "^1.4.10",
@@ -28,12 +30,29 @@
     "@types/react": "19.2.8",
     "@types/react-dom": "19.2.3",
     "postcss": "8.4.33",
-    "prettier": "3.2.4",
     "typescript": "5.3.3"
   },
   "manifest": {
+    "permissions": [
+      "tabCapture",
+      "offscreen",
+      "activeTab"
+    ],
     "host_permissions": [
-      "http://localhost:3000/*"
+      "http://localhost:3000/*",
+      "https://meet.google.com/*",
+      "https://*.zoom.us/*"
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "src/permission.html",
+          "src/offscreen.html"
+        ],
+        "matches": [
+          "<all_urls>"
+        ]
+      }
     ]
   }
 }

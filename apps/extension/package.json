@@ -10,6 +10,7 @@
   "dependencies": {
     "@workspace/contracts": "workspace:*",
     "@workspace/ui": "workspace:*"
+    
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.28",

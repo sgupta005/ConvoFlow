@@ -4,3 +4,5 @@ export const authClient = createAuthClient({
   baseURL: "http://localhost:3000" /* Base URL of your Better Auth backend. */,
   plugins: []
 })
+
+export type Session = typeof authClient.$Infer.Session;

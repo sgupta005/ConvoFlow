@@ -7,7 +7,7 @@
       "@/*": ["./src/*"],
       "@workspace/ui/*": ["../../packages/ui/src/*"]
     },
-    // "strict": true,
+    "strict": true,
     "baseUrl": "."
   }
 }
