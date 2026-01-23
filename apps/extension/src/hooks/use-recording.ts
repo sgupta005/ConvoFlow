@@ -138,6 +138,13 @@ export function useRecording() {
         );
       });
 
+      //create meeting in database
+      const response = await fetch(`${process.env.PLASMO_PUBLIC_BACKEND_URL}/api/meeting/create`, {
+        method: 'POST'
+      });
+      const result = await response.json();
+      if (!result.success) throw new Error('Error creating meeting in backend.');
+
       chrome.runtime.sendMessage({
         type: 'start-recording',
         target: 'offscreen',

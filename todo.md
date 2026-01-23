@@ -14,8 +14,9 @@
 - [x] fix web app type errors.
 
 - [x] make meeting search work
+- [x] create db function and api route for creating meeting
+- [x] send request to this route when user clicks record. 
+- [x] add dashboard link in extension
 - [ ] Create UI for no meetings
 - [ ] create new sidebar for meeting
-- [ ] create db function and api route for creating meeting
-- [ ] send reques to this route when user clicks record. 
 - [ ] create meeting settings page to rename and delete meeting. 

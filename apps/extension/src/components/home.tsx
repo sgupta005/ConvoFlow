@@ -10,7 +10,6 @@ import { authClient } from "@/lib/auth-client";
 import { Logo } from "./logo"
 import { useRecording } from "@/hooks/use-recording";
 
-
 export function Home({ session }: { session: Session }) {
   const {
     isRecording,
@@ -44,7 +43,7 @@ export function Home({ session }: { session: Session }) {
               <span className="font-medium">{session.user?.email}</span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer" onClick={() => chrome.tabs.create({ url: 'http://localhost:3000/dashboard' })}>
+            <DropdownMenuItem className="cursor-pointer" onClick={() => chrome.tabs.create({ url: process.env.PLASMO_PUBLIC_BACKEND_URL })}>
               <SquareTerminal />
               <span>Open Dashboard</span>
             </DropdownMenuItem>
