@@ -31,7 +31,7 @@ export function WorkspaceSwitcher({ workspaces, userId }: { workspaces: Workspac
   const router = useRouter();
   const params = useParams();
 
-  const currentWorkspaceId = params.id as string;
+  const currentWorkspaceId = params.workspaceId as string;
 
   // Find current workspace or default to first one
   const activeWorkspace =

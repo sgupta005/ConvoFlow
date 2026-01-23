@@ -8,19 +8,19 @@ import { LayouClient } from './layout-client';
 import { AppSidebar } from '@/components/app-sidebar';
 import { getMeetingsByWorkspace } from '@workspace/db';
 
-export default async function Page({ params, children }: { params: Promise<{ id: string }>, children: Readonly<React.ReactNode> }) {
-  const { id } = await params;
+export default async function Page({ params, children }: { params: Promise<{ workspaceId: string }>, children: Readonly<React.ReactNode> }) {
+  const { workspaceId } = await params;
 
   const session = await auth.api.getSession({
     headers: await headers(),
   });
   if (!session?.user) redirect('/login');
 
-  const meetings = await getMeetingsByWorkspace(id);
+  const meetings = await getMeetingsByWorkspace(workspaceId);
 
   return (
     <SidebarProvider>
-      <AppSidebar workspaceId={id} meetings={meetings} />
+      <AppSidebar workspaceId={workspaceId} meetings={meetings} />
       <LayouClient>{children}</LayouClient>
     </SidebarProvider>
   );

@@ -11,10 +11,10 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
 export default async function Page({ params }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ workspaceId: string }>
 }) {
   const session = await auth.api.getSession({ headers: await headers() });
-  const { id: workspaceId } = await params;
+  const { workspaceId } = await params;
 
   const workspace = await getWorkspaceById(workspaceId);
   if (!workspace || !session) return notFound();
