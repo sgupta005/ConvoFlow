@@ -11,9 +11,10 @@
 - [ ] When user clicks start recording automatically add meeting to that workspace. 
 - [ ] Sync extension theme with website theme and give option to change theme in extension.
 - [ ] add theme toggle in extension. 
-- [ ] fix web app type errors.
+- [x] fix web app type errors.
 
-- [ ] make meeting search work
+- [x] make meeting search work
+- [ ] Create UI for no meetings
 - [ ] create new sidebar for meeting
 - [ ] create db function and api route for creating meeting
 - [ ] send reques to this route when user clicks record. 

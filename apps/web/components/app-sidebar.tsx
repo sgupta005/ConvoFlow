@@ -14,11 +14,18 @@ import {
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { getUserWorkspaces } from '@workspace/db';
+import { Meeting } from '@workspace/db';
+
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  workspaceId: string;
+  meetings: Meeting[];
+}
 
 export async function AppSidebar({
   workspaceId,
+  meetings,
   ...props
-}: React.ComponentProps<typeof Sidebar> & { workspaceId: string }) {
+}: AppSidebarProps) {
 
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -33,7 +40,7 @@ export async function AppSidebar({
         <WorkspaceSwitcher workspaces={workspaces} userId={session.user.id} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain workspaceId={workspaceId} />
+        <NavMain workspaceId={workspaceId} meetings={meetings} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={session.user} />

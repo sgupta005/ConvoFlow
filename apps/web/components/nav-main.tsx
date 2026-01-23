@@ -23,8 +23,10 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SearchMeeting } from '@/features/meetings/components/search-meeting';
+import { useState } from 'react';
+import { Meeting } from '@workspace/db';
 
-function defaultNavItems(workspaceId: string) {
+function defaultNavItems(workspaceId: string, meetings: Meeting[]) {
   return [
     {
       title: 'Dashboard',
@@ -34,18 +36,12 @@ function defaultNavItems(workspaceId: string) {
     },
     {
       title: 'Meetings',
-      url: '#',
+      url: '/meeting/info',
       icon: Bot,
-      items: [
-        {
-          title: 'Meeting 1',
-          url: '#',
-        },
-        {
-          title: 'Meeting 2',
-          url: '#',
-        },
-      ],
+      items: meetings.map((meeting) => ({
+        title: meeting.title,
+        url: `/workspace/${workspaceId}/meeting/${meeting.id}`,
+      })),
     },
     {
       title: 'Settings',
@@ -55,15 +51,24 @@ function defaultNavItems(workspaceId: string) {
   ];
 }
 
-export function NavMain({ workspaceId }: { workspaceId: string }) {
+interface NavMainProps {
+  workspaceId: string;
+  meetings: Meeting[];
+}
+
+export function NavMain({ workspaceId, meetings }: NavMainProps) {
+  const [search, setSearch] = useState('');
+
   const pathname = usePathname();
+
   function isActive(url: string) {
     return pathname.includes(url);
   }
+
   return (
     <SidebarGroup>
       <SidebarMenu>
-        {defaultNavItems(workspaceId).map((item) =>
+        {defaultNavItems(workspaceId, meetings).map((item) =>
           <Collapsible
             key={item.title}
             asChild
@@ -94,9 +99,8 @@ export function NavMain({ workspaceId }: { workspaceId: string }) {
               {item.items && item.items.length > 0 && (
                 <CollapsibleContent>
                   <SidebarMenuSub>
-                    {item.title === 'Meetings' && <SearchMeeting />
-                    }
-                    {item.items?.map((subItem) => (
+                    <SearchMeeting search={search} setSearch={setSearch} />
+                    {item.items?.filter(subItem => subItem.title.toLowerCase().includes(search.toLowerCase())).map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
                           <a href={subItem.url}>
