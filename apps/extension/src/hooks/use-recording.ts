@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { checkMicrophonePermission, checkTabRecordable } from '@/lib/utils';
 
 interface RecordingState {
   isRecording: boolean;
@@ -21,37 +22,11 @@ export function useRecording() {
     canRecord: false,
   });
 
-  // Check microphone permission
-  const checkMicrophonePermission = useCallback(async (): Promise<boolean> => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      stream.getTracks().forEach((track) => track.stop());
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }, []);
-
-  // Check if current tab is recordable
-  const checkTabRecordable = useCallback(async (): Promise<boolean> => {
-    try {
-      const [tab] = await chrome.tabs.query({
-        active: true,
-        currentWindow: true,
-      });
-      return Boolean(
-        tab?.url?.includes('meet.google') || tab?.url?.includes('zoom')
-      );
-    } catch {
-      return false;
-    }
-  }, []);
-
   // Check recording state on mount
-  useEffect(() => {
-    const checkRecordingState = async () => {
+  useEffect(function () {
+    async function checkRecordingState() {
       const hasPermission = await checkMicrophonePermission();
-      
+
       if (!hasPermission) {
         // Open permission page in new tab
         chrome.tabs.create({ url: chrome.runtime.getURL('tabs/permission.html') });
@@ -60,7 +35,7 @@ export function useRecording() {
       }
 
       const canRecord = await checkTabRecordable();
-      
+
       // Check if offscreen document is recording
       const contexts = await chrome.runtime.getContexts({});
       const offscreenDocument = contexts.find(
@@ -83,8 +58,8 @@ export function useRecording() {
   }, [checkMicrophonePermission, checkTabRecordable]);
 
   // Listen for messages from offscreen document
-  useEffect(() => {
-    const handleMessage = (message: PopupMessage) => {
+  useEffect(function () {
+    function handleMessage(message: PopupMessage) {
       if (message.target === 'popup') {
         switch (message.type) {
           case 'recording-error':
@@ -111,7 +86,7 @@ export function useRecording() {
   }, []);
 
   // Start recording
-  const startRecording = useCallback(async () => {
+  const startRecording = useCallback(async function () {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
@@ -184,7 +159,7 @@ export function useRecording() {
   }, []);
 
   // Stop recording
-  const stopRecording = useCallback(() => {
+  const stopRecording = useCallback(function () {
     setState((prev) => ({ ...prev, isLoading: true }));
 
     chrome.runtime.sendMessage({
@@ -203,12 +178,12 @@ export function useRecording() {
   }, []);
 
   // Clear error
-  const clearError = useCallback(() => {
+  const clearError = useCallback(function () {
     setState((prev) => ({ ...prev, error: null }));
   }, []);
 
   // Refresh tab status
-  const refreshTabStatus = useCallback(async () => {
+  const refreshTabStatus = useCallback(async function () {
     const canRecord = await checkTabRecordable();
     setState((prev) => ({ ...prev, canRecord }));
   }, [checkTabRecordable]);

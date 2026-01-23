@@ -2,11 +2,12 @@ import "@/style.css";
 import { useState } from "react";
 import { Button } from "@workspace/ui/components/button";
 import { Mic, CheckCircle, XCircle } from "lucide-react";
+import { Logo } from "@/components/logo";
 
 function PermissionPage() {
   const [status, setStatus] = useState<'idle' | 'granted' | 'denied'>('idle');
 
-  const requestPermission = async () => {
+  async function requestPermission() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       stream.getTracks().forEach((track) => track.stop());
@@ -22,11 +23,14 @@ function PermissionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-card rounded-lg shadow-lg p-8 text-center space-y-6">
+    <div className="min-h-screen bg-background flex items-center justify-center relative">
+      <div className="absolute top-8 left-12">
+        <Logo />
+      </div>
+      <div className="max-w-md w-full p-8 text-center space-y-8">
         <div className="flex justify-center">
-          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-            <Mic className="w-10 h-10 text-primary" />
+          <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center">
+            <Mic className="size-8" strokeWidth={1.5} />
           </div>
         </div>
 
@@ -40,7 +44,7 @@ function PermissionPage() {
         </div>
 
         {status === 'idle' && (
-          <Button onClick={requestPermission} className="w-full" size="lg">
+          <Button onClick={requestPermission} className="w-full cursor-pointer font-semibold" size="lg">
             Allow Microphone Access
           </Button>
         )}

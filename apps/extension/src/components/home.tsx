@@ -24,8 +24,8 @@ export function Home({ session }: { session: Session }) {
   } = useRecording();
 
   return (
-    <div className="flex flex-col h-full min-h-[500px] p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="flex flex-col h-full min-h-[500px] p-8">
+      <div className="flex items-center justify-between">
         <Logo />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -60,7 +60,7 @@ export function Home({ session }: { session: Session }) {
       {/* Recording Controls */}
       <div className="flex-1 flex flex-col items-center justify-center gap-6">
         {error && (
-          <Alert variant="destructive" className="mb-4">
+          <Alert variant="destructive" >
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="flex items-center justify-between">
               <span>{error}</span>
