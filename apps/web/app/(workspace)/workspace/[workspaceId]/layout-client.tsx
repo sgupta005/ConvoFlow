@@ -5,7 +5,7 @@ import { SidebarInset, SidebarTrigger } from "@workspace/ui/components/sidebar";
 import { Separator } from "@workspace/ui/components/separator";
 import { ThemeToggle } from "@workspace/ui/components/theme-toggle";
 
-export function LayouClient({ children }: { children: Readonly<React.ReactNode> }) {
+export function LayoutClient({ children }: { children: Readonly<React.ReactNode> }) {
   const pathname = usePathname();
   const lastSegment = pathname.split('/').filter(Boolean).pop();
   const pageName = lastSegment

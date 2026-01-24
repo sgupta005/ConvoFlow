@@ -4,7 +4,7 @@ import {
 } from '@workspace/ui/components/sidebar';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { LayouClient } from './layout-client';
+import { LayoutClient } from './layout-client';
 import { AppSidebar } from '@/components/app-sidebar';
 import { getMeetingsByWorkspace } from '@workspace/db';
 
@@ -20,8 +20,8 @@ export default async function Page({ params, children }: { params: Promise<{ wor
 
   return (
     <SidebarProvider>
-      <AppSidebar workspaceId={workspaceId} meetings={meetings} />
-      <LayouClient>{children}</LayouClient>
+      <AppSidebar meetings={meetings} />
+      <LayoutClient>{children}</LayoutClient>
     </SidebarProvider>
   );
 }

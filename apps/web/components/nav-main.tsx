@@ -1,5 +1,8 @@
 'use client';
 
+import Link from 'next/link';
+import { usePathname, useParams } from 'next/navigation';
+import { useState } from 'react';
 import {
   ArrowLeft,
   ChevronRight,
@@ -19,29 +22,30 @@ import {
   SidebarMenuSubItem,
 } from '@workspace/ui/components/sidebar';
 import { Button } from '@workspace/ui/components/button';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+
 import { Meeting } from '@workspace/db';
 import { SearchMeeting } from '@/features/meetings/components/search-meeting';
 import { defaultNavItems, meetingNavItems } from '@/lib/nav-items';
 
 interface NavMainProps {
-  workspaceId: string;
   meetings: Meeting[];
 }
 
-export function NavMain({ workspaceId, meetings }: NavMainProps) {
+export function NavMain({ meetings }: NavMainProps) {
   const [search, setSearch] = useState('');
 
   const pathname = usePathname();
+
+  const params = useParams();
+  const workspaceId = params.workspaceId as string;
+  const meetingId = params.meetingId as string;
 
   function isActive(url: string) {
     return pathname.includes(url);
   }
 
   const isMeetingPage = pathname.includes('/meeting')
-  const navItems = isMeetingPage ? meetingNavItems : defaultNavItems(workspaceId, meetings);
+  const navItems = isMeetingPage ? meetingNavItems(workspaceId, meetingId) : defaultNavItems(workspaceId, meetings);
 
   return (
     <>

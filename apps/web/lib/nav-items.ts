@@ -37,28 +37,35 @@ export function defaultNavItems(workspaceId: string, meetings: Meeting[]) {
   ];
 }
 
-export const meetingNavItems = [
-  {
-    title: 'Transcript',
-    url: '/transcript',
-    icon: FileText,
-    isActive: false,
-    items: []
-  },
-  {
-    title: 'Summary',
-    url: '/summary',
-    icon: File,
-    isActive: false,
-    items: []
-
-  },
-  {
-    title: 'Action Items',
-    url: '/action-items',
-    icon: FileCheck,
-    isActive: false,
-    items: []
-
-  },
-]
+export function meetingNavItems(workspaceId: string, meetingId: string) {
+  return [
+    {
+      title: 'Transcript',
+      url: `/workspace/${workspaceId}/meeting/${meetingId}/transcript`,
+      icon: FileText,
+      isActive: false,
+      items: []
+    },
+    {
+      title: 'Summary',
+      url: `/workspace/${workspaceId}/meeting/${meetingId}/summary`,
+      icon: File,
+      isActive: false,
+      items: []
+    },
+    {
+      title: 'Action Items',
+      url: `/workspace/${workspaceId}/meeting/${meetingId}/action-items`,
+      icon: FileCheck,
+      isActive: false,
+      items: []
+    },
+    {
+      title: 'Settings',
+      url: `/workspace/${workspaceId}/meeting/${meetingId}/settings`,
+      icon: Settings2,
+      isActive: false,
+      items: []
+    },
+  ]
+}

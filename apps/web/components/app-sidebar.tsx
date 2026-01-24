@@ -13,16 +13,15 @@ import {
 } from '@workspace/ui/components/sidebar';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
-import { getUserWorkspaces } from '@workspace/db';
+
 import { Meeting } from '@workspace/db';
+import { getUserWorkspaces } from '@workspace/db';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  workspaceId: string;
   meetings: Meeting[];
 }
 
 export async function AppSidebar({
-  workspaceId,
   meetings,
   ...props
 }: AppSidebarProps) {
@@ -40,7 +39,7 @@ export async function AppSidebar({
         <WorkspaceSwitcher workspaces={workspaces} userId={session.user.id} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain workspaceId={workspaceId} meetings={meetings} />
+        <NavMain meetings={meetings} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={session.user} />
