@@ -20,6 +20,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from '@workspace/ui/components/sidebar';
 import { Button } from '@workspace/ui/components/button';
 
@@ -33,6 +34,7 @@ interface NavMainProps {
 
 export function NavMain({ meetings }: NavMainProps) {
   const [search, setSearch] = useState('');
+  const { state } = useSidebar();
 
   const pathname = usePathname();
 
@@ -51,12 +53,14 @@ export function NavMain({ meetings }: NavMainProps) {
     <>
       {isMeetingPage &&
         <Button
-          className="w-max -mb-3 text-muted-foreground hover:text-foreground hover:bg-transparent bg-transparent shadow-none"
+          className="w-max -mb-3 ml-1 text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-transparent bg-transparent shadow-none"
           asChild
         >
           <Link href={`/workspace/${workspaceId}/dashboard`}>
             <ArrowLeft />
-            <span className="text-xs tracking-tight">DASHBOARD</span>
+            {state === 'expanded' && (
+              <span className="text-xs tracking-tight">DASHBOARD</span>
+            )}
           </Link>
         </Button>
       }
