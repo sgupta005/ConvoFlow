@@ -10,6 +10,7 @@
   "dependencies": {
     "@deepgram/sdk": "^4.11.3",
     "@workspace/contracts": "workspace:*",
+    "@workspace/db": "workspace:*",
     "cors": "^2.8.5",
     "cross-fetch": "^4.1.0",
     "dotenv": "^17.2.1",

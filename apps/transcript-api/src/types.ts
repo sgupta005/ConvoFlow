@@ -1,9 +1,8 @@
-import type { WriteStream } from 'fs';
 import type { LiveClient } from '@deepgram/sdk';
 
 export interface Session {
   id: string;
-  transcriptStream: WriteStream;
+  meetingId: string;
   deepgramConnection: LiveClient;
   startTime: Date;
   chunkCount: number;

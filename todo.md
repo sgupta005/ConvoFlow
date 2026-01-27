@@ -9,8 +9,7 @@
 
 - [x] Create a default workspace at signup
 - [x] When user clicks start recording automatically add meeting to that workspace.
-- [ ] Sync extension theme with website theme and give option to change theme in extension.
-- [ ] add theme toggle in extension.
+- [x] Sync extension theme with website theme and give option to change theme in extension.
 - [x] fix web app type errors.
 
 - [x] make meeting search work
@@ -18,5 +17,12 @@
 - [x] send request to this route when user clicks record.
 - [x] add dashboard link in extension
 - [ ] Create UI for no meetings
-- [ ] create new sidebar for meeting
-- [ ] create meeting settings page to rename and delete meeting.
+- [x] create new sidebar for meeting
+- [x] create meeting settings page to rename and delete meeting.
+
+- [x] Save transcript segments to Db
+- [ ] Make ws and http server run on same port
+- [ ] Test SSE endpoint.
+
+
+- [ ] Fix meeting naming system

@@ -1,0 +1,14 @@
+model TranscriptSegment {
+  id        String   @id @default(cuid())
+  meetingId String
+  meeting   Meeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  text      String
+  timestamp DateTime
+  isFinal   Boolean  @default(false)
+  speaker   String?  // For diarization
+
+  createdAt DateTime @default(now())
+
+  @@index([meetingId, createdAt])
+}

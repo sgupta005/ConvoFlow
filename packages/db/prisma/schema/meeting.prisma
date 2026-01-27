@@ -6,7 +6,7 @@ model Meeting {
   title   String
   is_live Boolean @default(false)
 
-  transcript  String?
+  transcriptSegments TranscriptSegment[]
   summary     String?
   actionItems ActionItem[]
 

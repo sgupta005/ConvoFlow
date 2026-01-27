@@ -19,7 +19,4 @@ export function deleteSession(socket: WebSocket): void {
 export function cleanupSession(session: Session): void {
   // Close Deepgram connection
   closeDeepgramConnection(session);
-
-  // Close transcript file stream
-  session.transcriptStream.end();
 }

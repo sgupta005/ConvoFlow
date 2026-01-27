@@ -4,3 +4,4 @@ export * from '../generated/prisma/models';
 
 export * from './repos/workspace.repo';
 export * from './repos/meeting.repo';
+export * from './repos/transcript-segment.repo';

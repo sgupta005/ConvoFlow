@@ -4,10 +4,10 @@ import {
   type DeepgramClient,
   type LiveClient,
 } from '@deepgram/sdk';
-import type { WriteStream } from 'fs';
 import type { WebSocket } from 'ws';
 import type { ServerMessage } from '@workspace/contracts';
 import type { Session, DeepgramTranscriptData } from './types.js';
+import { createTranscriptSegment } from '@workspace/db';
 
 let deepgramClient: DeepgramClient;
 
@@ -22,19 +22,19 @@ export function createDeepgramConnection(): LiveClient {
     smart_format: true,
     punctuate: true,
     interim_results: true,
-    diarize: true,
+    // diarize: true,
   });
 }
 
 interface DeepgramHandlerContext {
   session: Session;
   sessionId: string;
-  transcriptStream: WriteStream;
+  meetingId: string;
   socket: WebSocket;
 }
 
 export function setupDeepgramHandlers(ctx: DeepgramHandlerContext): void {
-  const { session, sessionId, transcriptStream, socket } = ctx;
+  const { session, sessionId, meetingId, socket } = ctx;
   const { deepgramConnection } = session;
 
   deepgramConnection.on(LiveTranscriptionEvents.Open, () => {
@@ -50,27 +50,36 @@ export function setupDeepgramHandlers(ctx: DeepgramHandlerContext): void {
 
   deepgramConnection.on(
     LiveTranscriptionEvents.Transcript,
-    (data: DeepgramTranscriptData) => {
+    async (data: DeepgramTranscriptData) => {
       const transcript = data.channel?.alternatives?.[0]?.transcript;
 
       if (transcript && transcript.trim().length > 0) {
-        // Only write final transcripts to avoid duplicates
-        const timestamp = new Date().toISOString();
-        const line = `[${timestamp}] ${transcript}\n`;
+        const timestamp = new Date();
+        const isFinal = data.is_final || false;
 
-        // Write to transcript file
-        transcriptStream.write(line);
+        // Save transcript segment to database
+        try {
+          console.log('SAVING TO DB')
+          await createTranscriptSegment({
+            meetingId,
+            text: transcript,
+            timestamp,
+            isFinal,
+          });
 
-        console.log(`[${sessionId}] Transcript: ${transcript}`);
+          console.log(`[${sessionId}] Saved transcript: ${transcript}`);
 
-        // Send transcript to client in real-time
-        const response: ServerMessage = {
-          type: 'transcript',
-          sessionId,
-          text: transcript,
-          isFinal: data.is_final || false,
-        };
-        socket.send(JSON.stringify(response));
+          // Send transcript to client in real-time
+          const response: ServerMessage = {
+            type: 'transcript',
+            sessionId,
+            text: transcript,
+            isFinal,
+          };
+          socket.send(JSON.stringify(response));
+        } catch (error) {
+          console.error(`Error saving transcript segment:`, error);
+        }
       }
     }
   );

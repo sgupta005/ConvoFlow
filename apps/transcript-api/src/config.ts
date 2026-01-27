@@ -2,7 +2,8 @@ import { existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { AUDIO_STREAM_CONFIG } from '@workspace/contracts';
 
-export const PORT = AUDIO_STREAM_CONFIG.WEBSOCKET_PORT;
+export const WEBSOCKET_PORT = AUDIO_STREAM_CONFIG.WEBSOCKET_PORT;
+export const HTTP_PORT = AUDIO_STREAM_CONFIG.HTTP_PORT;
 export const TRANSCRIPTS_DIR = join(process.cwd(), 'transcripts');
 
 // Ensure transcripts directory exists

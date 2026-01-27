@@ -144,11 +144,14 @@ export function useRecording() {
       });
       const result = await response.json();
       if (!result.success) throw new Error('Error creating meeting in backend.');
+      
+      const meetingId = result.data?.meetingId;
+      if (!meetingId) throw new Error('Meeting ID not returned from backend.');
 
       chrome.runtime.sendMessage({
         type: 'start-recording',
         target: 'offscreen',
-        data: streamId,
+        data: { streamId, meetingId },
       });
 
       setState((prev) => ({

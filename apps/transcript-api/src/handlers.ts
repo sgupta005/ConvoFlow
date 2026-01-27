@@ -1,8 +1,5 @@
 import type { WebSocket } from 'ws';
-import { createWriteStream } from 'fs';
-import { join } from 'path';
 import type { ClientMessage, ServerMessage } from '@workspace/contracts';
-import { TRANSCRIPTS_DIR } from './config.js';
 import type { Session } from './types.js';
 import {
   createDeepgramConnection,
@@ -39,7 +36,7 @@ export function handleControlMessage(
 ): void {
   switch (message.type) {
     case 'start-session':
-      handleStartSession(socket, message.sessionId);
+      handleStartSession(socket, message.meetingId);
       break;
     case 'stop-session':
       handleStopSession(socket);
@@ -49,29 +46,17 @@ export function handleControlMessage(
 
 function handleStartSession(
   socket: WebSocket,
-  providedSessionId?: string
+  meetingId: string
 ): void {
-  const sessionId =
-    providedSessionId ||
-    `transcript-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-  const filename = `${sessionId}.txt`;
-  const filepath = join(TRANSCRIPTS_DIR, filename);
-
-  // Create transcript file stream
-  const transcriptStream = createWriteStream(filepath);
-
-  // Write header to transcript file
+  const sessionId = `session-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
   const startTime = new Date();
-  transcriptStream.write(`Transcript Session: ${sessionId}\n`);
-  transcriptStream.write(`Started: ${startTime.toISOString()}\n`);
-  transcriptStream.write(`---\n\n`);
 
   // Create Deepgram connection
   const deepgramConnection = createDeepgramConnection();
 
   const session: Session = {
     id: sessionId,
-    transcriptStream,
+    meetingId,
     deepgramConnection,
     startTime,
     chunkCount: 0,
@@ -83,13 +68,12 @@ function handleStartSession(
   setupDeepgramHandlers({
     session,
     sessionId,
-    transcriptStream,
+    meetingId,
     socket,
   });
 
   setSession(socket, session);
-  console.log(`Started session: ${sessionId}`);
-  console.log(`Saving transcript to: ${filepath}`);
+  console.log(`Started session: ${sessionId} for meeting: ${meetingId}`);
 
   const response: ServerMessage = {
     type: 'session-started',
@@ -104,18 +88,10 @@ function handleStopSession(socket: WebSocket): void {
     const duration =
       (new Date().getTime() - session.startTime.getTime()) / 1000;
 
-    // Write footer to transcript file
-    session.transcriptStream.write(`\n---\n`);
-    session.transcriptStream.write(`Ended: ${new Date().toISOString()}\n`);
-    session.transcriptStream.write(`Duration: ${duration}s\n`);
-    session.transcriptStream.write(
-      `Total audio chunks: ${session.chunkCount}\n`
-    );
-
     cleanupSession(session);
 
     console.log(
-      `Stopped session: ${session.id} | Duration: ${duration}s | Chunks: ${session.chunkCount}`
+      `Stopped session: ${session.id} | Meeting: ${session.meetingId} | Duration: ${duration}s | Chunks: ${session.chunkCount}`
     );
 
     const response: ServerMessage = {

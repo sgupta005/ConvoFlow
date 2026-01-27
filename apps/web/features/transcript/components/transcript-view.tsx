@@ -4,6 +4,7 @@ import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { Badge } from '@workspace/ui/components/badge';
 import { formatTimestamp } from '@/lib/utils';
 import { Separator } from '@workspace/ui/components/separator';
+import { useEffect, useRef } from 'react';
 
 // Types matching the TranscriptSegment schema
 interface TranscriptSegment {
@@ -162,8 +163,17 @@ function SimpleSegmentItem({ segment, index }: SimpleSegmentItemProps) {
 }
 
 export function TranscriptView() {
+  const transcriptContainerRef = useRef<HTMLDivElement>(null);
+
   const meeting = dummyMeetingInfo;
   const segments = dummyTranscriptSegments;
+
+  function scrollToBottom() {
+    if (transcriptContainerRef.current)
+      transcriptContainerRef.current.scrollIntoView(false);
+  }
+
+  useEffect(() => scrollToBottom(), [])
 
   return (
     <div className="h-full mx-auto max-w-6xl p-4 space-y-8 flex flex-col">
@@ -184,7 +194,7 @@ export function TranscriptView() {
       </div>
       <Separator />
       <ScrollArea className="h-[calc(100vh-240px)] bg-card shadow-sm border rounded-lg">
-        <div className="space-y-0 p-8">
+        <div className="space-y-0 p-8" ref={transcriptContainerRef}>
           {segments.map((segment, index) => (
             <SimpleSegmentItem
               key={segment.id}

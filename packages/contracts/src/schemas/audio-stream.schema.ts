@@ -3,7 +3,7 @@ import { z } from 'zod';
 // Client -> Server Messages (Control Messages)
 export const StartSessionMessageSchema = z.object({
   type: z.literal('start-session'),
-  sessionId: z.string().optional(),
+  meetingId: z.string(),
 });
 
 export const StopSessionMessageSchema = z.object({

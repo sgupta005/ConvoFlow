@@ -8,7 +8,7 @@ import {
 interface OffscreenMessage {
   target: string;
   type: string;
-  data?: string;
+  data?: { streamId: string; meetingId: string } | string;
 }
 
 interface ChromeTabAudioConstraints {
@@ -21,20 +21,23 @@ interface ChromeTabAudioConstraints {
   video: boolean;
 }
 
-const WEBSOCKET_URL = `ws://localhost:${AUDIO_STREAM_CONFIG.WEBSOCKET_PORT}`;
+const WEBSOCKET_URL = `ws://localhost:8081`;
 
 let recorder: MediaRecorder | undefined;
 let activeStreams: MediaStream[] = [];
 let websocket: WebSocket | undefined;
 let sessionId: string | undefined;
+let currentMeetingId: string | undefined;
 
 chrome.runtime.onMessage.addListener(
   async (message: OffscreenMessage): Promise<void> => {
     if (message.target === 'offscreen') {
       switch (message.type) {
         case 'start-recording':
-          if (message.data) {
+          if (message.data && typeof message.data === 'object' && 'streamId' in message.data && 'meetingId' in message.data) {
             await startRecording(message.data);
+          } else {
+            console.error('Invalid data format for start-recording message');
           }
           break;
         case 'stop-recording':
@@ -56,8 +59,10 @@ function connectWebSocket(): Promise<WebSocket> {
       resolve(ws);
     };
 
-    ws.onerror = (error): void => {
-      console.error('WebSocket error:', error);
+    ws.onerror = (event): void => {
+      console.error('WebSocket error:', {
+        type: event.type,
+      });
       reject(new Error('Failed to connect to WebSocket server'));
     };
 
@@ -98,19 +103,22 @@ function handleWebSocketMessage(message: ServerMessage): void {
   }
 }
 
-async function startRecording(streamId: string): Promise<void> {
+async function startRecording(data: { streamId: string; meetingId: string }): Promise<void> {
   if (recorder?.state === 'recording') {
     throw new Error('Called startRecording while recording is in progress.');
   }
 
   await stopAllStreams();
 
+  const { streamId, meetingId } = data;
+  currentMeetingId = meetingId;
+
   try {
     // Connect to WebSocket server first
     websocket = await connectWebSocket();
 
     // Start a new recording session
-    const startMessage: ClientMessage = { type: 'start-session' };
+    const startMessage: ClientMessage = { type: 'start-session', meetingId };
     websocket.send(JSON.stringify(startMessage));
 
     // Get tab audio stream
@@ -225,6 +233,7 @@ async function stopRecording(): Promise<void> {
 
   await stopAllStreams();
   window.location.hash = '';
+  currentMeetingId = undefined;
 
   // Close WebSocket connection after a short delay to ensure final messages are sent
   setTimeout(() => {
