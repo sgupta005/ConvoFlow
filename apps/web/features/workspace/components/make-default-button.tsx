@@ -22,7 +22,7 @@ export function MakeDefaultButton({ workspaceName, workspaceId, userId, }: MakeD
   }
 
   return (
-    <Button variant="outline" className='mr-0 ml-auto' onClick={handleMakeDefault} disabled={isPending}>
+    <Button variant="outline" onClick={handleMakeDefault} disabled={isPending}>
       {isPending && <Spinner data-icon='inline-start' />} Make Default
     </Button>
   )

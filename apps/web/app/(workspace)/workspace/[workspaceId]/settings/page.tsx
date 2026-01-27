@@ -22,7 +22,7 @@ export default async function Page({ params }: {
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-8">
       <div>
-        <div className="flex items-center gap-4 mb-2">
+        <div className="flex items-center gap-4 mb-2 justify-between">
           <h1 className="text-2xl font-semibold tracking-tight">{workspace.name}</h1>
           {workspace.is_default ? (
             <Tooltip>

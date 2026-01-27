@@ -24,7 +24,7 @@ export default async function Page({ params }: {
           <h1 className="text-2xl font-semibold tracking-tight">{meeting.title}</h1>
         </div>
         <p className="text-muted-foreground text-sm">
-          Manage your Meeting settings
+          Manage your Meeting's Settings
         </p>
       </div>
       <Separator />
