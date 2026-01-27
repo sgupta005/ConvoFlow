@@ -21,14 +21,18 @@ export async function POST() {
     const meetingName = `Meeting ${meetingCount + 1}`;
 
     //add a meeting to the default workspace
-    await createMeeting({
+    const meeting = await createMeeting({
       title: meetingName,
       workspace: {
         connect: { id: defaultWorkspace.id }
       }
     })
 
-    return NextResponse.json({ success: true, message: `${meetingName} created successfully.` },
+    return NextResponse.json({ 
+      success: true, 
+      data: { meetingId: meeting.id },
+      message: `${meetingName} created successfully.` 
+    },
       {
         headers: {
           'Access-Control-Allow-Origin': 'chrome-extension://fljdicobpfhohfcpmldbaemhadngokhd',
