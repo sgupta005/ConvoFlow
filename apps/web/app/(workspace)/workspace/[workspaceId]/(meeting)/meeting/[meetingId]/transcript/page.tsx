@@ -1,16 +1,12 @@
 import { TranscriptView } from '@/features/transcript/components/transcript-view';
+import { getMeetingByIdWithTranscript } from '@workspace/db';
+import { notFound } from 'next/navigation';
 
-// Dummy meeting data for testing - in production, this would come from the database
-const dummyMeeting = {
-  id: 'meeting-1',
-  title: 'Q1 Product Planning',
-  is_live: false, // Meeting has ended
-};
-
-function Page() {
-  const meeting = dummyMeeting;
-
-  return <TranscriptView />;
+async function Page({ params }: { params: Promise<{ meetingId: string }> }) {
+  const { meetingId } = await params;
+  const meeting = await getMeetingByIdWithTranscript(meetingId);
+  if (!meeting) return notFound();
+  return <TranscriptView meeting={meeting} />;
 }
 
 export default Page;

@@ -17,6 +17,15 @@ export function getMeetingById(id: string) {
   });
 }
 
+export function getMeetingByIdWithTranscript(id: string) {
+  return prisma.meeting.findUnique({
+    where: { id },
+    include: {
+      transcriptSegments: true,
+    },
+  });
+}
+
 export function getMeetingsByWorkspace(workspaceId: string) {
   return prisma.meeting.findMany({
     where: { workspaceId },
