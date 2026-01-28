@@ -1,10 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { prisma } from '@workspace/db';
 
-/**
- * Authentication middleware for Express routes
- * Extracts user ID from Better Auth session cookie
- */
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
   try {
     // Extract session token from cookies
@@ -49,9 +45,6 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
   }
 }
 
-/**
- * Helper function to parse cookie string
- */
 function parseCookies(cookieHeader: string): Record<string, string> {
   const cookies: Record<string, string> = {};
 

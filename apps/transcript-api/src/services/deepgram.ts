@@ -6,7 +6,7 @@ import {
 } from '@deepgram/sdk';
 import type { WebSocket } from 'ws';
 import type { ServerMessage } from '@workspace/contracts';
-import type { Session, DeepgramTranscriptData } from './types.js';
+import type { Session, DeepgramTranscriptData } from '../lib/types.js';
 import { createTranscriptSegment } from '@workspace/db';
 
 let deepgramClient: DeepgramClient;

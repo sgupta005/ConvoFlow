@@ -69,3 +69,11 @@ export async function checkUserOwnsWorkspace(workspaceId: string, userId: string
   })
   return !!workspaceMember;
 }
+
+export async function checkUserHasAccessToWorkspace(workspaceId: string, userId: string) {
+  const workspaceMember = await prisma.workspaceMember.findFirst({
+    where:
+      { workspaceId, userId }
+  })
+  return !!workspaceMember;
+}

@@ -1,21 +1,21 @@
 // IMPORTANT: Load env vars FIRST before any other imports otherwise prisma will throw errors
-import './env.js';
+import './lib/env.js';
 
 import http from 'http';
 import express from 'express';
 import cors from 'cors';
 import { WebSocketServer } from 'ws';
-import { config } from './config.js';
+import { config } from './lib/config.js';
 import { ClientMessageSchema } from '@workspace/contracts';
-import { initializeDeepgram } from './deepgram.js';
+import { initializeDeepgram } from './services/deepgram.js';
 import {
   handleBinaryMessage,
   handleControlMessage,
   handleSocketClose,
   handleSocketError,
 } from './handlers.js';
-import { streamTranscriptHandler } from './transcript-stream.js';
-import { authMiddleware } from './auth-middleware.js';
+import { connectPgListener } from './lib/connect-pg-listener.js';
+import { streamTranscriptController } from './controllers/stream-transcript.js';
 
 const deepgramApiKey = config.DEEPGRAM_API_KEY();
 initializeDeepgram(deepgramApiKey);
@@ -25,13 +25,17 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(cors({
-  origin: config.WEB_APP_URL || config.EXTENSION_URL,
+  origin: '*',
   credentials: true, // Allow credentials (cookies) to be sent
 }));
 app.use(express.json());
 
-// SSE endpoint for streaming transcripts (protected with auth)
-app.get('/api/meeting/:meetingId/transcript/stream', streamTranscriptHandler);
+// Postgres notification listener for real-time transcript updates
+const clients = new Map<string, Set<any>>(); // meetingId → responses
+await connectPgListener(clients);
+
+// SSE endpoint for streaming transcripts (unauthenticated)
+app.get('/api/meeting/:meetingId/transcript/stream', streamTranscriptController(clients));
 
 // Create WebSocket server for audio streaming
 const wss = new WebSocketServer({ server });

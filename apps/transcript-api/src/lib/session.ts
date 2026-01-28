@@ -1,6 +1,6 @@
 import type { WebSocket } from 'ws';
 import type { Session } from './types.js';
-import { closeDeepgramConnection } from './deepgram.js';
+import { closeDeepgramConnection } from '../services/deepgram.js';
 
 const sessions = new Map<WebSocket, Session>();
 

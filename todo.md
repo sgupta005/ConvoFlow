@@ -21,8 +21,10 @@
 - [x] create meeting settings page to rename and delete meeting.
 
 - [x] Save transcript segments to Db
-- [ ] Make ws and http server run on same port
-- [ ] Test SSE endpoint.
+- [x] Make ws and http server run on same port
+- [x] Test SSE endpoint.
+- [ ] add auth to sse endpoint.
 
 
 - [ ] Fix meeting naming system
+- [ ] Make is_live isLive in meeting model.

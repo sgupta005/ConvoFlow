@@ -1,17 +1,17 @@
 import type { WebSocket } from 'ws';
 import type { ClientMessage, ServerMessage } from '@workspace/contracts';
-import type { Session } from './types.js';
+import type { Session } from './lib/types.js';
 import {
   createDeepgramConnection,
   setupDeepgramHandlers,
   sendAudioToDeepgram,
-} from './deepgram.js';
+} from './services/deepgram.js';
 import {
   getSession,
   setSession,
   deleteSession,
   cleanupSession,
-} from './session.js';
+} from './lib/session.js';
 
 export function handleBinaryMessage(socket: WebSocket, data: Buffer): void {
   const session = getSession(socket);

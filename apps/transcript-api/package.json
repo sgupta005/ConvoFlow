@@ -15,12 +15,14 @@
     "cross-fetch": "^4.1.0",
     "dotenv": "^17.2.1",
     "express": "^5.2.1",
+    "pg": "^8.17.2",
     "ws": "^8.18.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^24.3.0",
+    "@types/pg": "^8.16.0",
     "@types/ws": "^8.18.1",
     "@workspace/typescript-config": "workspace:*",
     "tsx": "^4.0.0"
