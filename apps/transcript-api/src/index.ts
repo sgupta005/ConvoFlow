@@ -1,11 +1,12 @@
 // IMPORTANT: Load env vars FIRST before any other imports otherwise prisma will throw errors
 import './env.js';
 
-import { WebSocketServer } from 'ws';
+import http from 'http';
 import express from 'express';
 import cors from 'cors';
+import { WebSocketServer } from 'ws';
+import { config } from './config.js';
 import { ClientMessageSchema } from '@workspace/contracts';
-import { WEBSOCKET_PORT, HTTP_PORT, ensureTranscriptsDir, validateEnv } from './config.js';
 import { initializeDeepgram } from './deepgram.js';
 import {
   handleBinaryMessage,
@@ -15,40 +16,25 @@ import {
 } from './handlers.js';
 import { streamTranscriptHandler } from './transcript-stream.js';
 import { authMiddleware } from './auth-middleware.js';
-ensureTranscriptsDir();
-const apiKey = validateEnv();
-initializeDeepgram(apiKey);
 
-// Create Express HTTP server for SSE endpoints
+const deepgramApiKey = config.DEEPGRAM_API_KEY();
+initializeDeepgram(deepgramApiKey);
+
+// Create Express HTTP server for SSE endpoint
 const app = express();
+const server = http.createServer(app);
 
-// Middleware
-// app.use(cors({
-//   origin: process.env.WEB_APP_URL || 'http://localhost:3000' || 'chrome-extension://fljdicobpfhohfcpmldbaemhadngokhd',
-//   credentials: true, // Allow credentials (cookies) to be sent
-// }));
-// app.use(express.json());
+app.use(cors({
+  origin: config.WEB_APP_URL || config.EXTENSION_URL,
+  credentials: true, // Allow credentials (cookies) to be sent
+}));
+app.use(express.json());
 
 // SSE endpoint for streaming transcripts (protected with auth)
 app.get('/api/meeting/:meetingId/transcript/stream', streamTranscriptHandler);
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-// Start HTTP server
-app.listen(HTTP_PORT, () => {
-  console.log(`HTTP server listening on port ${HTTP_PORT}`);
-  console.log(`SSE endpoint: http://localhost:${HTTP_PORT}/api/meeting/:meetingId/transcript/stream`);
-});
-
 // Create WebSocket server for audio streaming
-const wss = new WebSocketServer({ port: WEBSOCKET_PORT });
-
-wss.on('listening', () => {
-  console.log(`WebSocket server listening on port ${WEBSOCKET_PORT}`);
-});
+const wss = new WebSocketServer({ server });
 
 wss.on('connection', (socket) => {
   console.log('Client connected');
@@ -80,3 +66,7 @@ wss.on('connection', (socket) => {
 wss.on('error', (error) => {
   console.error('WebSocket server error:', error);
 });
+
+server.listen(config.PORT, () => {
+  console.log(`Transcript API Server running on port ${config.PORT}`);
+})

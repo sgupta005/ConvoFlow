@@ -14,13 +14,6 @@ export interface DeepgramTranscriptData {
   channel?: {
     alternatives?: Array<{
       transcript?: string;
-      words?: Array<{
-        word: string;
-        start: number;
-        end: number;
-        confidence: number;
-        speaker: string;
-      }>;
     }>;
   };
   is_final?: boolean;

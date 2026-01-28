@@ -21,7 +21,7 @@ interface ChromeTabAudioConstraints {
   video: boolean;
 }
 
-const WEBSOCKET_URL = `ws://localhost:8081`;
+const WEBSOCKET_URL = `ws://localhost:8080`;
 
 let recorder: MediaRecorder | undefined;
 let activeStreams: MediaStream[] = [];
