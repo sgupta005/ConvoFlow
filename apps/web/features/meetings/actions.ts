@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from "next/cache";
-import { deleteMeeting, prisma } from "@workspace/db";
+import { deleteMeeting, updateMeeting } from "@workspace/db";
 import { checkUserOwnsMeeting } from "@workspace/db";
 
 export async function renameMeeting(meetingId: string, userId: string, newTitle: string) {
@@ -10,10 +10,7 @@ export async function renameMeeting(meetingId: string, userId: string, newTitle:
     const userOwnsMeeting = checkUserOwnsMeeting(meetingId, userId);
     if (!userOwnsMeeting) throw new Error('Only the owner can delete the meeting.')
 
-    await prisma.meeting.update({
-      where: { id: meetingId },
-      data: { title: newTitle }
-    })
+    await updateMeeting(meetingId, { title: newTitle })
 
     revalidatePath(`/meeting/${meetingId}/settings`)
 

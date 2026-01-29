@@ -5,6 +5,9 @@ import {
   AUDIO_STREAM_CONFIG,
 } from '@workspace/contracts';
 
+const WEBSOCKET_URL = `ws://localhost:8080`;
+const BACKEND_URL = 'http://localhost:3000';
+
 interface OffscreenMessage {
   target: string;
   type: string;
@@ -20,8 +23,6 @@ interface ChromeTabAudioConstraints {
   };
   video: boolean;
 }
-
-const WEBSOCKET_URL = `ws://localhost:8080`;
 
 let recorder: MediaRecorder | undefined;
 let activeStreams: MediaStream[] = [];
@@ -186,11 +187,16 @@ async function startRecording(data: { streamId: string; meetingId: string }): Pr
       }
     };
 
-    recorder.onstop = (): void => {
+    recorder.onstop = async (): Promise<void> => {
       // Send stop-session message
       if (websocket?.readyState === WebSocket.OPEN) {
         const stopMessage: ClientMessage = { type: 'stop-session' };
         websocket.send(JSON.stringify(stopMessage));
+      }
+
+      // Update meeting is_live status to false
+      if (currentMeetingId) {
+        await updateMeetingLiveStatus(currentMeetingId, false);
       }
 
       recorder = undefined;
@@ -215,6 +221,11 @@ async function startRecording(data: { streamId: string; meetingId: string }): Pr
       websocket = undefined;
     }
 
+    // Update meeting is_live status to false on error
+    if (currentMeetingId) {
+      await updateMeetingLiveStatus(currentMeetingId, false);
+    }
+
     chrome.runtime.sendMessage({
       type: 'recording-error',
       target: 'popup',
@@ -227,12 +238,21 @@ async function startRecording(data: { streamId: string; meetingId: string }): Pr
 }
 
 async function stopRecording(): Promise<void> {
+  // Save meetingId before clearing - recorder.onstop will use it
+  const meetingIdToUpdate = currentMeetingId;
+
   if (recorder && recorder.state === 'recording') {
     recorder.stop();
   }
 
   await stopAllStreams();
   window.location.hash = '';
+
+  // Update meeting status before clearing the ID
+  if (meetingIdToUpdate) {
+    await updateMeetingLiveStatus(meetingIdToUpdate, false);
+  }
+
   currentMeetingId = undefined;
 
   // Close WebSocket connection after a short delay to ensure final messages are sent
@@ -253,4 +273,27 @@ async function stopAllStreams(): Promise<void> {
 
   activeStreams = [];
   await new Promise<void>((resolve) => setTimeout(resolve, 100));
+}
+
+async function updateMeetingLiveStatus(meetingId: string, isLive: boolean): Promise<void> {
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/meeting/${meetingId}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        payload: { is_live: isLive }
+      }),
+    });
+
+    const result = await response.json();
+    if (!result.success) {
+      console.error('Failed to update meeting live status:', result.error);
+    }
+
+  } catch (error) {
+    console.error('Error updating meeting live status:', error);
+  }
 }

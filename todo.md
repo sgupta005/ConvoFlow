@@ -24,8 +24,11 @@
 - [x] Test SSE endpoint.
 
 - [x] add auth to sse endpoint.
-- [ ] use meeting.is_live in transcript view page. 
+- [ ] use meeting.is_live in transcript view page.
+
+- [ ] replace hardcoded backend urls with env vars in extension offscreen file
 
 - [ ] Create UI for no meetings
+- [ ] Create UI for no transcript segments.
 - [ ] Fix meeting naming system
 - [ ] Make is_live isLive in meeting model.

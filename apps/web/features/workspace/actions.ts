@@ -1,6 +1,6 @@
 'use server';
 
-import { checkUserOwnsWorkspace, createWorkspace, deleteWorkspace, getUserDefaultWorkspace, getWorkspaceById, prisma, WorkspaceRole } from '@workspace/db';
+import { checkUserOwnsWorkspace, createWorkspace, deleteWorkspace, getUserDefaultWorkspace, getWorkspaceById, prisma, updateWorkspace, WorkspaceRole } from '@workspace/db';
 import {
   createWorkspaceSchema,
   CreateWorkspaceSchema,
@@ -55,21 +55,9 @@ export async function makeWorkspaceDefault(workspaceId: string, userId: string) 
     //find the current default workspace and make is_default false
     const defaultWorkspace = await getUserDefaultWorkspace(userId);
     if (defaultWorkspace)
-      await prisma.workspace.update({
-        where: {
-          id: defaultWorkspace.id
-        }, data: {
-          is_default: false
-        }
-      })
+      await updateWorkspace(defaultWorkspace.id, { is_default: false })
 
-    await prisma.workspace.update({
-      where: {
-        id: workspaceId
-      }, data: {
-        is_default: true
-      }
-    })
+    await updateWorkspace(workspaceId, { is_default: true })
 
     revalidatePath(`/workspace/${workspaceId}/settings`)
 
@@ -90,13 +78,7 @@ export async function renameWorkspace(workspaceId: string, userId: string, newNa
     const userOwnsWorkspace = checkUserOwnsWorkspace(workspaceId, userId);
     if (!userOwnsWorkspace) throw new Error('Only the owner can delete the workspace.')
 
-    await prisma.workspace.update({
-      where: {
-        id: workspaceId
-      }, data: {
-        name: newName
-      }
-    })
+    await updateWorkspace(workspaceId, { name: newName })
 
     revalidatePath(`/workspace/${workspaceId}/settings`)
 

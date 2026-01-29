@@ -1,6 +1,6 @@
 import { prisma } from '../client';
 import type { CreateWorkspaceSchema } from '@workspace/contracts';
-import { WorkspaceRole } from '../../generated/prisma/client';
+import { Prisma, WorkspaceRole } from '../../generated/prisma/client';
 
 export async function createWorkspace(data: CreateWorkspaceSchema) {
   const workspace = await prisma.workspace.create({
@@ -19,8 +19,25 @@ export async function createWorkspace(data: CreateWorkspaceSchema) {
   return workspace;
 }
 
+export async function updateWorkspace(id: string, data: Prisma.WorkspaceUpdateInput) {
+  return await prisma.workspace.update({
+    where: {
+      id
+    },
+    data,
+  })
+}
+
+export async function deleteWorkspace(id: string) {
+  return await prisma.workspace.delete({
+    where: {
+      id
+    }
+  })
+}
+
 export async function getUserDefaultWorkspace(userId: string) {
-  return prisma.workspace.findFirst({
+  return await prisma.workspace.findFirst({
     where: {
       is_default: true,
       members: {
@@ -34,7 +51,7 @@ export async function getUserDefaultWorkspace(userId: string) {
 }
 
 export async function getUserWorkspaces(userId: string) {
-  return prisma.workspace.findMany({
+  return await prisma.workspace.findMany({
     where: {
       members: {
         some: { userId },
@@ -47,15 +64,7 @@ export async function getUserWorkspaces(userId: string) {
 }
 
 export async function getWorkspaceById(id: string) {
-  return prisma.workspace.findUnique({
-    where: {
-      id
-    }
-  })
-}
-
-export async function deleteWorkspace(id: string) {
-  return prisma.workspace.delete({
+  return await prisma.workspace.findUnique({
     where: {
       id
     }

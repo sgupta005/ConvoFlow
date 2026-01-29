@@ -36,7 +36,7 @@ export async function POST() {
     },
       {
         headers: {
-          'Access-Control-Allow-Origin': 'chrome-extension://fljdicobpfhohfcpmldbaemhadngokhd',
+          'Access-Control-Allow-Origin': process.env.NEXT_EXTENSION_URL!,
           'Access-Control-Allow-Methods': 'POST, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type'
         }

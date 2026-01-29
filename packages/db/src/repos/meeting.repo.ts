@@ -8,8 +8,21 @@ export async function createMeeting(data: Prisma.MeetingCreateInput) {
   return meeting;
 }
 
-export function getMeetingById(id: string) {
-  return prisma.meeting.findUnique({
+export async function updateMeeting(meetingId: string, data: Prisma.MeetingUpdateInput) {
+  return await prisma.meeting.update({
+    where: { id: meetingId },
+    data,
+  })
+}
+
+export async function deleteMeeting(meetingId: string) {
+  return await prisma.meeting.delete({
+    where: { id: meetingId }
+  })
+}
+
+export async function getMeetingById(id: string) {
+  return await prisma.meeting.findUnique({
     where: { id },
     include: {
       workspace: true,
@@ -17,8 +30,8 @@ export function getMeetingById(id: string) {
   });
 }
 
-export function getMeetingByIdWithTranscript(id: string) {
-  return prisma.meeting.findUnique({
+export async function getMeetingByIdWithTranscript(id: string) {
+  return await prisma.meeting.findUnique({
     where: { id },
     include: {
       transcriptSegments: true,
@@ -26,8 +39,8 @@ export function getMeetingByIdWithTranscript(id: string) {
   });
 }
 
-export function getMeetingsByWorkspace(workspaceId: string) {
-  return prisma.meeting.findMany({
+export async function getMeetingsByWorkspace(workspaceId: string) {
+  return await prisma.meeting.findMany({
     where: { workspaceId },
     orderBy: {
       createdAt: 'desc',
@@ -52,8 +65,37 @@ export async function checkUserOwnsMeeting(meetingId: string, userId: string) {
   return !!meeting;
 }
 
-export async function deleteMeeting(meetingId: string) {
-  return prisma.meeting.delete({
-    where: { id: meetingId }
+export async function checkUserCanUpdateMeeting(meetingId: string, userId: string) {
+  const meeting = await prisma.meeting.findFirst({
+    where: {
+      id: meetingId,
+      workspace: {
+        members: {
+          some: {
+            userId,
+            role: {
+              in: [WorkspaceRole.OWNER, WorkspaceRole.ADMIN]
+            }
+          }
+        }
+      }
+    }
   })
+  return !!meeting;
+}
+
+export async function checkUserHasAccessToMeeting(meetingId: string, userId: string) {
+  const meeting = await prisma.meeting.findFirst({
+    where: {
+      id: meetingId,
+      workspace: {
+        members: {
+          some: {
+            userId,
+          }
+        }
+      }
+    }
+  })
+  return !!meeting;
 }
