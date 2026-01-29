@@ -23,3 +23,14 @@ export async function createTranscriptSegment(data: {
     data,
   });
 }
+
+export async function getCatchUpTranscriptSegments(meetingId: string, afterId: string | undefined, afterTimestamp: string | undefined) {
+  return await prisma.transcriptSegment.findMany({
+    where: {
+      meetingId,
+      ...(afterId ? { id: { gt: afterId } } : {}),
+      ...(afterTimestamp ? { createdAt: { gt: new Date(afterTimestamp) } } : {}),
+    },
+    orderBy: { createdAt: 'asc' },
+  });
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Prisma } from '@workspace/db';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { Badge } from '@workspace/ui/components/badge';
@@ -8,16 +8,40 @@ import { Separator } from '@workspace/ui/components/separator';
 import { TranscriptSegment } from './transcript-segment';
 
 export function TranscriptView({ meeting }: { meeting: Prisma.MeetingGetPayload<{ include: { transcriptSegments: true } }> }) {
+  const [segments, setSegments] = useState(meeting.transcriptSegments);
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
 
-  const segments = meeting.transcriptSegments;
+  useEffect(function () {
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/meeting/${meeting.id}/transcript/stream`;
+    const es = new EventSource(url);
+
+    es.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setSegments((prev) => {
+        const lastSegment = prev.at(-1);
+        if (lastSegment?.isFinal) {
+          return [...prev, data]
+        }
+        return [...prev.slice(0, -1), data]
+      })
+    };
+
+    es.onerror = (err) => {
+      console.error("SSE error", err);
+      es.close();
+    };
+
+    return () => {
+      es.close();
+    };
+  }, [meeting])
+
+  useEffect(() => scrollToBottom(), [segments.length])
 
   function scrollToBottom() {
     if (transcriptContainerRef.current)
       transcriptContainerRef.current.scrollIntoView(false);
   }
-
-  useEffect(() => scrollToBottom(), [])
 
   return (
     <div className="h-full mx-auto max-w-6xl p-4 space-y-8 flex flex-col">
@@ -39,7 +63,7 @@ export function TranscriptView({ meeting }: { meeting: Prisma.MeetingGetPayload<
       <Separator />
       <ScrollArea className="h-[calc(100vh-240px)] bg-card shadow-sm border rounded-lg">
         <div className="space-y-0 p-8" ref={transcriptContainerRef}>
-          {segments.filter(segment => segment.isFinal).map((segment, index) =>
+          {segments.filter((segment, index) => segment.isFinal || index === segments.length - 1).map((segment, index) =>
             <TranscriptSegment
               key={segment.id}
               segment={segment}

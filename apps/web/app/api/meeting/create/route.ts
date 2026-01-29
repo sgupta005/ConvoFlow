@@ -23,15 +23,16 @@ export async function POST() {
     //add a meeting to the default workspace
     const meeting = await createMeeting({
       title: meetingName,
+      is_live: true,
       workspace: {
         connect: { id: defaultWorkspace.id }
       }
     })
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: { meetingId: meeting.id },
-      message: `${meetingName} created successfully.` 
+      message: `${meetingName} created successfully.`
     },
       {
         headers: {

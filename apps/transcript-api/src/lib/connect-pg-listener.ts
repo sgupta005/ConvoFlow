@@ -25,7 +25,7 @@ export async function connectPgListener(clients: Map<string, Set<any>>) {
     if (!subs) return;
 
     for (const res of subs) {
-      res.write(`data: ${JSON.stringify({ text: payload.text })}\n\n`);
+      res.write(`data: ${JSON.stringify(payload)}\n\n`);
     }
   });
 
