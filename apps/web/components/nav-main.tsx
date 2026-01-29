@@ -103,6 +103,7 @@ export function NavMain({ meetings }: NavMainProps) {
                           <SidebarMenuSubButton asChild>
                             <a href={subItem.url}>
                               <span>{subItem.title}</span>
+                              {subItem.isLive && <span className='bg-primary rounded-full size-2 mr-0 ml-auto animate-pulse' />}
                             </a>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>

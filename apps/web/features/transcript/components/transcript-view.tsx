@@ -12,6 +12,11 @@ export function TranscriptView({ meeting }: { meeting: Prisma.MeetingGetPayload<
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(function () {
+    // Only connect to SSE endpoint if meeting is live
+    if (!meeting.is_live) {
+      return;
+    }
+
     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/meeting/${meeting.id}/transcript/stream`;
     const es = new EventSource(url, { withCredentials: true });
 
@@ -65,6 +70,8 @@ export function TranscriptView({ meeting }: { meeting: Prisma.MeetingGetPayload<
         <div className="space-y-0 p-8" ref={transcriptContainerRef}>
           {segments.filter((segment, index) => segment.isFinal || index === segments.length - 1).map((segment, index) =>
             <TranscriptSegment
+              isMeetingLive={meeting.is_live}
+              isLastSegment={segment.id === segments.at(-1)?.id}
               key={segment.id}
               segment={segment}
               index={index}

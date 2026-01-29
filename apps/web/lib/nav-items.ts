@@ -25,6 +25,7 @@ export function defaultNavItems(workspaceId: string, meetings: Meeting[]) {
       items: meetings.map((meeting) => ({
         title: meeting.title,
         url: `/workspace/${workspaceId}/meeting/${meeting.id}/transcript`,
+        isLive: meeting.is_live,
       })),
     },
     {
