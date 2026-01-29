@@ -12,12 +12,12 @@
 
 ## 📑 Table of Contents
 
-- [Getting Started](#-getting-started)
-- [How It Works](#-how-it-works)
-- [Architecture](#-architecture)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Setup Guide](#-setup-guide)
+- [Getting Started](#getting-started)
+- [How It Works](#how-it-works)
+- [Architecture](#architecture)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Setup Guide](#setup-guide)
 
 ---
 
@@ -85,11 +85,14 @@ graph TB
     
     WebApp -->|Reads data| Database
     
-    style Extension fill:#4285f4,color:#fff
-    style WebApp fill:#34a853,color:#fff
-    style TranscriptAPI fill:#fbbc04,color:#000
-    style Deepgram fill:#ea4335,color:#fff
-    style Database fill:#9333ea,color:#fff
+    style Browser fill:none,stroke:#666,stroke-width:2px
+    style Backend fill:none,stroke:#666,stroke-width:2px
+    
+    style Extension fill:#006239,color:#fff
+    style WebApp fill:#006239,color:#fff
+    style TranscriptAPI fill:#006239,color:#fff
+    style Deepgram fill:#121212,color:#fff
+    style Database fill:#121212,color:#fff
 ```
 
 **How it works:**
