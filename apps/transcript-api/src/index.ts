@@ -16,6 +16,7 @@ import {
 } from './handlers.js';
 import { connectPgListener } from './lib/connect-pg-listener.js';
 import { streamTranscriptController } from './controllers/stream-transcript.js';
+import { authMiddleware } from './middlewares/auth-middleware.js';
 
 const deepgramApiKey = config.DEEPGRAM_API_KEY();
 initializeDeepgram(deepgramApiKey);
@@ -25,7 +26,7 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(cors({
-  origin: '*',
+  origin: [config.WEB_APP_URL, config.EXTENSION_URL],
   credentials: true, // Allow credentials (cookies) to be sent
 }));
 app.use(express.json());
@@ -35,7 +36,7 @@ const clients = new Map<string, Set<any>>(); // meetingId → responses
 await connectPgListener(clients);
 
 // SSE endpoint for streaming transcripts (unauthenticated)
-app.get('/api/meeting/:meetingId/transcript/stream', streamTranscriptController(clients));
+app.get('/api/meeting/:meetingId/transcript/stream', authMiddleware, streamTranscriptController(clients));
 
 // Create WebSocket server for audio streaming
 const wss = new WebSocketServer({ server });

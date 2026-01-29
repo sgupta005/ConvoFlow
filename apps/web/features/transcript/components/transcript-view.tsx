@@ -13,7 +13,7 @@ export function TranscriptView({ meeting }: { meeting: Prisma.MeetingGetPayload<
 
   useEffect(function () {
     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/meeting/${meeting.id}/transcript/stream`;
-    const es = new EventSource(url);
+    const es = new EventSource(url, { withCredentials: true });
 
     es.onmessage = (event) => {
       const data = JSON.parse(event.data);

@@ -16,15 +16,16 @@
 - [x] create db function and api route for creating meeting
 - [x] send request to this route when user clicks record.
 - [x] add dashboard link in extension
-- [ ] Create UI for no meetings
 - [x] create new sidebar for meeting
 - [x] create meeting settings page to rename and delete meeting.
 
 - [x] Save transcript segments to Db
 - [x] Make ws and http server run on same port
 - [x] Test SSE endpoint.
-- [ ] add auth to sse endpoint.
 
+- [x] add auth to sse endpoint.
+- [ ] use meeting.is_live in transcript view page. 
 
+- [ ] Create UI for no meetings
 - [ ] Fix meeting naming system
 - [ ] Make is_live isLive in meeting model.

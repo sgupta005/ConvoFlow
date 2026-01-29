@@ -6,15 +6,13 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
     // Extract session token from cookies
     // Better Auth uses 'better-auth.session_token' cookie by default
     const cookieHeader = req.headers.cookie;
-
     if (!cookieHeader) {
       return res.status(401).json({ error: 'Unauthorized - No session cookie' });
     }
 
     // Parse cookie to get session token
     const cookies = parseCookies(cookieHeader);
-    const sessionToken = cookies['better-auth.session_token'];
-
+    const sessionToken = cookies['better-auth.session_token']?.split('.')[0];
     if (!sessionToken) {
       return res.status(401).json({ error: 'Unauthorized - No session token' });
     }
@@ -24,7 +22,6 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
       where: { token: sessionToken },
       include: { user: true },
     });
-
     if (!session || !session.user) {
       return res.status(401).json({ error: 'Unauthorized - Invalid session' });
     }
