@@ -6,6 +6,7 @@ import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { Badge } from '@workspace/ui/components/badge';
 import { Separator } from '@workspace/ui/components/separator';
 import { TranscriptSegment } from './transcript-segment';
+import { FileText } from 'lucide-react';
 
 export function TranscriptView({ meeting }: { meeting: Prisma.MeetingGetPayload<{ include: { transcriptSegments: true } }> }) {
   const [segments, setSegments] = useState(meeting.transcriptSegments);
@@ -66,19 +67,26 @@ export function TranscriptView({ meeting }: { meeting: Prisma.MeetingGetPayload<
         </Badge>
       </div>
       <Separator />
-      <ScrollArea className="h-[calc(100vh-240px)] bg-card shadow-sm border rounded-lg">
-        <div className="space-y-0 p-8" ref={transcriptContainerRef}>
-          {segments.filter((segment, index) => segment.isFinal || index === segments.length - 1).map((segment, index) =>
-            <TranscriptSegment
-              isMeetingLive={meeting.is_live}
-              isLastSegment={segment.id === segments.at(-1)?.id}
-              key={segment.id}
-              segment={segment}
-              index={index}
-            />
-          )}
+      {segments.length === 0 ? (
+        <div className="flex flex-col gap-4 items-center justify-center h-[calc(100vh-240px)] bg-card shadow-sm border rounded-lg">
+          <FileText className="size-10 text-muted-foreground" />
+          <p className="text-muted-foreground text-sm">No transcript found</p>
         </div>
-      </ScrollArea>
+      ) :
+        <ScrollArea className="h-[calc(100vh-240px)] bg-card shadow-sm border rounded-lg">
+          <div className="space-y-0 p-8" ref={transcriptContainerRef}>
+            {segments.filter((segment, index) => segment.isFinal || index === segments.length - 1).map((segment, index) =>
+              <TranscriptSegment
+                isMeetingLive={meeting.is_live}
+                isLastSegment={segment.id === segments.at(-1)?.id}
+                key={segment.id}
+                segment={segment}
+                index={index}
+              />
+            )}
+          </div>
+        </ScrollArea>
+      }
     </div>
   );
 }
