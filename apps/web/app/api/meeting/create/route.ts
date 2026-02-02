@@ -14,11 +14,37 @@ export async function POST() {
     const defaultWorkspace = await getUserDefaultWorkspace(session.user.id);
     if (!defaultWorkspace) throw new Error('Could not find default Workspace.')
 
-    //get count of meetings in this workspace
-    const meetingCount = await prisma.meeting.count();
+    //get existing "Meeting N" titles in this workspace to determine next index
+    const existingMeetings = await prisma.meeting.findMany({
+      where: {
+        workspaceId: defaultWorkspace.id,
+        title: {
+          startsWith: "Meeting",
+        },
+      },
+      select: {
+        title: true,
+      },
+    });
 
-    //set meetings name to 'Meeting count+1'
-    const meetingName = `Meeting ${meetingCount + 1}`;
+    //determine the highest numeric suffix used so far
+    let maxSuffix = 0;
+    for (const { title } of existingMeetings) {
+      const match = title.match(/^Meeting\s(\d+)$/);
+      if (match) {
+        const num = Number.parseInt(match[1] || '0', 10);
+        if (num === 0) {
+          maxSuffix = existingMeetings.length;
+          break;
+        }
+        if (!Number.isNaN(num) && num > maxSuffix) {
+          maxSuffix = num;
+        }
+      }
+    }
+
+    //set meeting name to 'Meeting {maxSuffix+1}'
+    const meetingName = `Meeting ${maxSuffix + 1}`;
 
     //add a meeting to the default workspace
     const meeting = await createMeeting({
