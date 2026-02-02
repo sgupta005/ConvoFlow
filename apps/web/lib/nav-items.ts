@@ -19,7 +19,7 @@ export function defaultNavItems(workspaceId: string, meetings: Meeting[]) {
     },
     {
       title: 'Meetings',
-      url: '/meeting/info',
+      url: `/workspace/${workspaceId}/no-meetings`,
       icon: Bot,
       isActive: false,
       items: meetings.map((meeting) => ({
