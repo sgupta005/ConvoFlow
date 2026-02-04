@@ -21,7 +21,7 @@ export function LayoutClient({ children }: { children: Readonly<React.ReactNode>
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
             />
-            <span className="text-sm">{pageName}</span>
+            <span className="text-sm">{pageName.replace('-', ' ')}</span>
           </div>
           <ThemeToggle />
         </div>
