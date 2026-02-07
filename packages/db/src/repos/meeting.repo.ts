@@ -24,10 +24,14 @@ export async function deleteMeeting(meetingId: string) {
 export async function getMeetingById(id: string) {
   return await prisma.meeting.findUnique({
     where: { id },
-    include: {
-      workspace: true,
-    },
   });
+}
+
+export async function getMeetingByIdWithActionItems(id: string) {
+  return await prisma.meeting.findUnique({
+    where: { id },
+    include: { actionItems: true }
+  })
 }
 
 export async function getMeetingByIdWithTranscript(id: string) {

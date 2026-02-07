@@ -1,32 +1,29 @@
 'use client';
 
+import { useEffect } from 'react';
+
+import { Prisma } from '@workspace/db';
 import { ListTodo, RefreshCw } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
+
 import { MeetingPageHeader } from '@/features/meetings/components/meeting-page-header';
 import { MeetingLiveWarning } from '@/features/meetings/components/meeting-live-warning';
 import { GeneratingState } from '@/features/meetings/components/generating-state';
 import { ActionItemCard } from './action-item-card';
+import { useGenerate } from '@/hooks/useGenerate';
 
-interface ActionItem {
-  id: string;
-  text: string;
-  isCompleted?: boolean;
-}
+export function ActionItemsView({ meeting }: {
+  meeting: Prisma.MeetingGetPayload<{ include: { actionItems: true } }>
+}) {
+  const { isGenerating, triggerGenerate } = useGenerate(meeting.id);
 
-interface ActionItemsViewProps {
-  meeting: {
-    id: string;
-    title: string;
-    is_live: boolean;
-    startTime: Date | null;
-    createdAt: Date;
-  };
-  actionItems: ActionItem[];
-  isGenerating?: boolean;
-}
+  useEffect(() => {
+    if (meeting.is_live || meeting.actionItems.length > 0) return;
+    triggerGenerate();
+  }, []);
 
-export function ActionItemsView({ meeting, actionItems, isGenerating = false }: ActionItemsViewProps) {
+  const { actionItems } = meeting;
   const displayDate = meeting.startTime ?? meeting.createdAt;
 
   // Show live meeting warning
@@ -92,7 +89,7 @@ export function ActionItemsView({ meeting, actionItems, isGenerating = false }: 
       </ScrollArea>
 
       <div className="flex justify-end">
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" onClick={triggerGenerate}>
           <RefreshCw className="size-4 mr-2" />
           Regenerate Action Items
         </Button>

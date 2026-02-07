@@ -1,27 +1,30 @@
 'use client';
 
+import { useEffect } from 'react';
+
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { FileText, RefreshCw } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
+import { Prisma } from '@workspace/db';
+
 import { MeetingPageHeader } from '@/features/meetings/components/meeting-page-header';
 import { MeetingLiveWarning } from '@/features/meetings/components/meeting-live-warning';
 import { GeneratingState } from '@/features/meetings/components/generating-state';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { useGenerate } from '@/hooks/useGenerate';
 
-interface SummaryViewProps {
-  meeting: {
-    id: string;
-    title: string;
-    is_live: boolean;
-    summary: string | null;
-    startTime: Date | null;
-    createdAt: Date;
-  };
-  isGenerating?: boolean;
-}
+export function SummaryView({ meeting }: {
+  meeting: Prisma.MeetingGetPayload<{}>
+}) {
+  const { isGenerating, triggerGenerate } = useGenerate(meeting.id);
 
-export function SummaryView({ meeting, isGenerating = false }: SummaryViewProps) {
+  // When there's no summary and not live, auto-start generation on mount
+  useEffect(() => {
+    if (meeting.is_live || meeting.summary) return;
+    triggerGenerate();
+  }, []);
+
   const displayDate = meeting.startTime ?? meeting.createdAt;
 
   // Show live meeting warning
@@ -42,19 +45,14 @@ export function SummaryView({ meeting, isGenerating = false }: SummaryViewProps)
     );
   }
 
-  // Show empty state if no summary
+  // Show empty state if no summary (e.g. generate failed or no transcript)
   if (!meeting.summary) {
     return (
       <div className="h-full mx-auto max-w-6xl p-4 space-y-8 flex flex-col">
-        <MeetingPageHeader
-          title={meeting.title}
-          subtitle="View your Meeting's Summary"
-          date={displayDate}
-        />
-        <div className="flex flex-col gap-4 items-center justify-center h-[calc(100dvh-240px)] bg-card shadow-sm border rounded-lg">
+        <div className="flex flex-col gap-4 items-center justify-center h-[calc(100dvh-240px)]">
           <FileText className="size-10 text-muted-foreground" />
           <p className="text-muted-foreground text-sm">No summary available</p>
-          <Button variant="outline" size="sm" className="mt-2">
+          <Button variant="outline" size="sm" className="mt-2" onClick={triggerGenerate}>
             <RefreshCw className="size-4 mr-2" />
             Generate Summary
           </Button>
@@ -101,7 +99,7 @@ export function SummaryView({ meeting, isGenerating = false }: SummaryViewProps)
       </ScrollArea>
 
       <div className="flex justify-end">
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" onClick={triggerGenerate}>
           <RefreshCw className="size-4 mr-2" />
           Regenerate Summary
         </Button>
