@@ -3,6 +3,7 @@
 - [x] Create UI for no transcript segments.
 - [ ] when a new meeting is added it's name dosen't come up automatically in sidebar.
 
+- [ ] Make Dashboard Page
 - [ ] add credentials auth
 - [x] Replace workspace switcher with meeting switcher in meeting page
 - [ ] Deploy all services

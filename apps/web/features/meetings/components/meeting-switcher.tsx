@@ -89,7 +89,6 @@ export function MeetingSwitcher({ meetings, userId }: MeetingSwitcherProps) {
                 {meeting.title}
               </DropdownMenuItem>
             ))}
-            <DropdownMenuSeparator />
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
