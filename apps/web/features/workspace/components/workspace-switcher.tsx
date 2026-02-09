@@ -1,6 +1,12 @@
 'use client';
 
+import Image from 'next/image';
+import { useParams } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
+
 import * as React from 'react';
+
+import { Prisma } from '@workspace/db';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,14 +23,15 @@ import {
 } from '@workspace/ui/components/sidebar';
 import { Badge } from '@workspace/ui/components/badge';
 import { ChevronsUpDown, Plus } from 'lucide-react';
-import { notFound, useRouter } from 'next/navigation';
-import { useParams } from 'next/navigation';
-import Image from 'next/image';
 
-import { Workspace } from '@workspace/contracts';
 import { CreateWorkspaceDialog } from './create-workspace-dialog';
 
-export function WorkspaceSwitcher({ workspaces, userId }: { workspaces: Workspace[], userId: string }) {
+interface WorkspaceSwitcherProps {
+  workspaces: Prisma.WorkspaceGetPayload<{}>[],
+  userId: string
+}
+
+export function WorkspaceSwitcher({ workspaces, userId }: WorkspaceSwitcherProps) {
   const [showDialog, setShowDialog] = React.useState(false)
 
   const { isMobile } = useSidebar();
@@ -38,7 +45,7 @@ export function WorkspaceSwitcher({ workspaces, userId }: { workspaces: Workspac
     workspaces.find((w) => w.id === currentWorkspaceId);
   if (!activeWorkspace) return notFound();
 
-  const handleWorkspaceSwitch = (workspace: Workspace) => {
+  const handleWorkspaceSwitch = (workspace: Prisma.WorkspaceGetPayload<{}>) => {
     if (workspace.id !== currentWorkspaceId) {
       router.push(`/workspace/${workspace.id}/dashboard`);
     }

@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { WorkspaceSwitcher } from '../features/workspace/components/workspace-switcher';
+import { SidebarHeaderSwitcher } from '@/components/sidebar-header-switcher';
 import {
   Sidebar,
   SidebarContent,
@@ -36,7 +36,11 @@ export async function AppSidebar({
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <WorkspaceSwitcher workspaces={workspaces} userId={session.user.id} />
+        <SidebarHeaderSwitcher
+          workspaces={workspaces}
+          meetings={meetings}
+          userId={session.user.id}
+        />
       </SidebarHeader>
       <SidebarContent>
         <NavMain meetings={meetings} />

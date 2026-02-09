@@ -4,5 +4,8 @@
 - [ ] when a new meeting is added it's name dosen't come up automatically in sidebar.
 
 - [ ] add credentials auth
+- [x] Replace workspace switcher with meeting switcher in meeting page
+- [ ] Deploy all services
+- [ ] Make Landing Page
 - [ ] replace hardcoded backend urls with env vars in extension offscreen file
 - [ ] Make is_live isLive in meeting model.

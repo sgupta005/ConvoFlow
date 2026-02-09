@@ -7,12 +7,4 @@ export const createWorkspaceSchema = z.object({
   isDefault: z.boolean().default(false)
 });
 
-export const workspaceSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  image: z.string().nullable(),
-  is_default: z.boolean(),
-});
-
-export type Workspace = z.infer<typeof workspaceSchema>;
 export type CreateWorkspaceSchema = z.input<typeof createWorkspaceSchema>;
