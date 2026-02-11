@@ -3,7 +3,6 @@ import { Chrome, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function Page() {
-
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-8">
       <div className="space-y-8">
