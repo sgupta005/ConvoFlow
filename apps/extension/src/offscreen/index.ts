@@ -284,7 +284,7 @@ async function updateMeetingLiveStatus(meetingId: string, isLive: boolean): Prom
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        payload: { is_live: isLive }
+        payload: { is_live: isLive, endTime: new Date().toISOString() }
       }),
     });
 

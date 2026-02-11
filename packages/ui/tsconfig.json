@@ -6,6 +6,9 @@
       "@workspace/ui/*": ["./src/*"]
     }
   },
-  "include": ["."],
+  "include": [
+    ".",
+    "../../apps/web/features/dashboard/components/bar-chart.tsx"
+  ],
   "exclude": ["node_modules", "dist"]
 }

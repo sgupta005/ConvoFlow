@@ -50,6 +50,7 @@ export async function POST() {
     const meeting = await createMeeting({
       title: meetingName,
       is_live: true,
+      startTime: new Date().toISOString(),
       workspace: {
         connect: { id: defaultWorkspace.id }
       }
