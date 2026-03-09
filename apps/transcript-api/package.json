@@ -27,6 +27,9 @@
     "@types/ws": "^8.18.1",
     "@workspace/typescript-config": "workspace:*"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "exports": {
     ".": "./src/index.ts"
   }
