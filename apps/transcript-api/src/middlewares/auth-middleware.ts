@@ -3,16 +3,8 @@ import { prisma } from '@workspace/db';
 
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
   try {
-    // Extract session token from cookies
-    // Better Auth uses 'better-auth.session_token' cookie by default
-    const cookieHeader = req.headers.cookie;
-    if (!cookieHeader) {
-      return res.status(401).json({ error: 'Unauthorized - No session cookie' });
-    }
-
-    // Parse cookie to get session token
-    const cookies = parseCookies(cookieHeader);
-    const sessionToken = cookies['better-auth.session_token']?.split('.')[0];
+    // Accept token from query parameter (for cross-origin SSE) or from cookies
+    const sessionToken = extractSessionToken(req);
     if (!sessionToken) {
       return res.status(401).json({ error: 'Unauthorized - No session token' });
     }
@@ -40,6 +32,20 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
     console.error('Auth middleware error:', error);
     return res.status(500).json({ error: 'Internal authentication error' });
   }
+}
+
+function extractSessionToken(req: Request): string | undefined {
+  const queryToken = req.query.token as string | undefined;
+  if (queryToken) return queryToken;
+
+  const cookieHeader = req.headers.cookie;
+  if (!cookieHeader) return undefined;
+
+  const cookies = parseCookies(cookieHeader);
+  return (
+    cookies['better-auth.session_token']?.split('.')[0] ||
+    cookies['__Secure-better-auth.session_token']?.split('.')[0]
+  );
 }
 
 function parseCookies(cookieHeader: string): Record<string, string> {

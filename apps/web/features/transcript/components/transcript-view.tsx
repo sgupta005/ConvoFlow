@@ -7,18 +7,20 @@ import { Prisma } from '@workspace/db';
 import { TranscriptSegment } from './transcript-segment';
 import { MeetingPageHeader } from '@/features/meetings/components/meeting-page-header';
 
-export function TranscriptView({ meeting }: { meeting: Prisma.MeetingGetPayload<{ include: { transcriptSegments: true } }> }) {
+export function TranscriptView({ meeting, sessionToken }: {
+  meeting: Prisma.MeetingGetPayload<{ include: { transcriptSegments: true } }>;
+  sessionToken?: string;
+}) {
   const [segments, setSegments] = useState(meeting.transcriptSegments);
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(function () {
-    // Only connect to SSE endpoint if meeting is live
-    if (!meeting.is_live) {
+    if (!meeting.is_live || !sessionToken) {
       return;
     }
 
-    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/meeting/${meeting.id}/transcript/stream`;
-    const es = new EventSource(url, { withCredentials: true });
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/meeting/${meeting.id}/transcript/stream?token=${sessionToken}`;
+    const es = new EventSource(url);
 
     es.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -39,7 +41,7 @@ export function TranscriptView({ meeting }: { meeting: Prisma.MeetingGetPayload<
     return () => {
       es.close();
     };
-  }, [meeting])
+  }, [meeting, sessionToken])
 
   useEffect(() => scrollToBottom(), [segments.length])
 
