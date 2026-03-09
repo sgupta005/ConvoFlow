@@ -32,7 +32,8 @@
       "dependsOn": ["^db:generate"]
     },
     "db:generate": {
-      "cache": false
+      "cache": false,
+      "env": ["DATABASE_URL", "DIRECT_URL"]
     },
     "db:push": {
       "cache": false
