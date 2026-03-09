@@ -32,7 +32,7 @@ export function TranscriptSegment({ segment, index, isMeetingLive, isLastSegment
         {/* Content */}
         <div className="flex-1 min-w-0 space-y-1">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-[10px] font-normal px-2 py-0 h-5">
+            <Badge variant="outline" className="text-[10px] font-normal px-2 py-0 h-5" suppressHydrationWarning>
               {formatTimestamp(segment.timestamp)}
             </Badge>
             <span className="text-[10px] text-muted-foreground">

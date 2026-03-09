@@ -17,7 +17,7 @@ export function MeetingPageHeader({ title, subtitle, date }: MeetingPageHeaderPr
           <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
           <p className="text-muted-foreground text-sm">{subtitle}</p>
         </div>
-        <Badge variant="secondary">
+        <Badge variant="secondary" suppressHydrationWarning>
           {date.toLocaleDateString('en-US', {
             weekday: 'short',
             month: 'short',
