@@ -1,7 +1,11 @@
 # Replace api.yourdomain.com with your real subdomain.
+
 # Caddy automatically obtains and renews a Let's Encrypt certificate for it,
+
 # and transparently proxies both HTTP (SSE) and WebSocket (wss) to the api
+
 # container. No extra config is needed for WebSocket upgrades.
-api.yourdomain.com {
-	reverse_proxy api:8080
+
+api.convoflow.shivamg.dev {
+reverse_proxy api:8080
 }
