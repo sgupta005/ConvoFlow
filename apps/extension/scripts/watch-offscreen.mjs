@@ -1,6 +1,7 @@
 import { context } from 'esbuild';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { buildOffscreenDefine } from './offscreen-env.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(__dirname, '..');
@@ -15,6 +16,7 @@ async function watchOffscreen() {
       target: 'chrome116',
       platform: 'browser',
       sourcemap: true,
+      define: buildOffscreenDefine('development'),
     });
 
     await ctx.watch();

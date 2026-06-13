@@ -1,6 +1,7 @@
 import { build } from 'esbuild';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { buildOffscreenDefine } from './offscreen-env.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(__dirname, '..');
@@ -16,6 +17,7 @@ async function buildOffscreen() {
       platform: 'browser',
       minify: true,
       sourcemap: false,
+      define: buildOffscreenDefine('production'),
     });
     console.log('✅ Offscreen script built successfully');
   } catch (error) {

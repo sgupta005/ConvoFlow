@@ -5,8 +5,12 @@ import {
   AUDIO_STREAM_CONFIG,
 } from '@workspace/contracts';
 
-const WEBSOCKET_URL = `ws://localhost:8080`;
-const BACKEND_URL = 'http://localhost:3000';
+// Injected at build time by scripts/build-offscreen.mjs (esbuild `define`).
+// Falls back to localhost for local `plasmo dev` if the env vars are unset.
+const WEBSOCKET_URL =
+  process.env.PLASMO_PUBLIC_WEBSOCKET_URL ?? 'ws://localhost:8080';
+const BACKEND_URL =
+  process.env.PLASMO_PUBLIC_BACKEND_URL ?? 'http://localhost:3000';
 
 interface OffscreenMessage {
   target: string;

@@ -2,9 +2,7 @@ import type { PlasmoCSConfig } from "plasmo";
 
 export const config: PlasmoCSConfig = {
   matches: [
-    "http://localhost:3000/*",
-    "https://localhost:3000/*",
-    // Add production domain here when deployed
+    "https://convoflow.shivamg.dev/*"
   ],
   run_at: "document_start"
 };

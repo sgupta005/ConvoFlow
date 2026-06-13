@@ -1,7 +1,7 @@
 {
   "name": "ConvoFlow - Meeting Transcription",
   "displayName": "ConvoFlow",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Real-time transcription for Google Meet and Zoom meetings.",
   "author": "Shivam Gupta <shivamgupta05.dev@gmail.com>",
   "scripts": {
@@ -45,7 +45,8 @@
       "storage"
     ],
     "host_permissions": [
-      "http://localhost:3000/*",
+      "https://convoflow.shivamg.dev/*",
+      "https://api.convoflow.shivamg.dev/*",
       "https://meet.google.com/*",
       "https://*.zoom.us/*"
     ],
@@ -54,10 +55,12 @@
         "resources": [
           "assets/offscreen.html",
           "assets/offscreen.js",
-          "tabs/permission.html"
+          "assets/icon.png",
+          "assets/recording.png"
         ],
         "matches": [
-          "<all_urls>"
+          "https://meet.google.com/*",
+          "https://*.zoom.us/*"
         ]
       }
     ],
