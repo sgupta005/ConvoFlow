@@ -31,8 +31,12 @@ COPY packages/ui/package.json packages/ui/
 COPY packages/typescript-config/package.json packages/typescript-config/
 COPY packages/eslint-config/package.json packages/eslint-config/
 
+# Scope the install to transcript-api's subtree (the `...` includes its workspace
+# deps @workspace/db and @workspace/contracts). This skips the web/extension/ui
+# dependency trees (Next.js, Parcel) — far fewer packages, faster and lighter on
+# small instances.
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile
+    pnpm install --frozen-lockfile --filter transcript-api...
 
 # ---- Copy source ----
 COPY . .
