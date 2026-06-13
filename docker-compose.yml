@@ -1,0 +1,37 @@
+services:
+  # transcript-api backend (Express SSE + WebSocket on port 8080)
+  api:
+    build:
+      # Build context is the repo root so workspace packages are available.
+      context: .
+      dockerfile: apps/transcript-api/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./apps/transcript-api/.env.production
+    expose:
+      - "8080"          # internal only; Caddy is the public entrypoint
+    networks:
+      - convoflow
+
+  # Caddy reverse proxy: automatic HTTPS (Let's Encrypt) + WebSocket passthrough
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data      # persisted TLS certificates
+      - caddy_config:/config
+    networks:
+      - convoflow
+
+networks:
+  convoflow:
+
+volumes:
+  caddy_data:
+  caddy_config:

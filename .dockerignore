@@ -1,0 +1,21 @@
+# Build context is the repo root. Keep the image small and avoid leaking secrets.
+**/node_modules
+**/.turbo
+**/.next
+**/dist
+**/build
+**/out
+
+# Never bake local env files into the image — env is injected at runtime.
+**/.env
+**/.env.*
+
+# Prisma client is regenerated inside the image.
+packages/db/generated
+
+# VCS / editor / misc
+.git
+.gitignore
+**/.DS_Store
+*.pem
+screenshots
