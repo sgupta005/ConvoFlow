@@ -42,7 +42,11 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 COPY . .
 
 # ---- Generate the Prisma client (gitignored, must be created in-image) ----
-RUN pnpm --filter @workspace/db db:generate
+# prisma.config.ts resolves env('DATABASE_URL') at load time, but `generate`
+# never connects to the DB. Provide a throwaway value scoped to this RUN only
+# (not a persisted ENV) so no real credentials end up in the image.
+RUN DATABASE_URL="postgresql://user:pass@localhost:5432/db" \
+    pnpm --filter @workspace/db db:generate
 
 ENV NODE_ENV=production
 # PORT is read by src/lib/config.ts; default 8080.
