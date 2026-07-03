@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -f \"assets/06DC536CC5E480CD8AF91EC8E71EC5ACC9AD5525.torrent\" \"assets/06DC536CC5E480CD8AF91EC8E71EC5ACC9AD5525.torrent:Zone.Identifier\" && echo \"removed\" && ls assets/)"
+    ],
+    "additionalDirectories": [
+      "/home/shivam2005/repos/next/ConvoFlow/apps/extension/assets"
+    ]
+  }
+}

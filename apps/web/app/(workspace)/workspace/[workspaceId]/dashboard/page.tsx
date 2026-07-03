@@ -2,13 +2,13 @@ import { notFound } from 'next/navigation';
 
 import { Video, Radio, Clock, CheckCircle } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@workspace/ui/components/empty';
 
 import { getMeetingsByWorkspace, getWorkspaceById } from '@workspace/db';
 import { computeStats, groupByWeek } from '@/features/dashboard/lib/dashboard-utils';
 import { StatCard } from '@/features/dashboard/components/stat-card';
 import { MeetingActivityChart } from '@/features/dashboard/components/meeting-activity-chart';
 import { RecentMeetings } from '@/features/dashboard/components/recent-meetings';
+import { NoMeetingsEmptyState } from '@/features/meetings/components/no-meetings-empty-state';
 
 export default async function DashboardPage({ params }: {
   params: Promise<{
@@ -24,24 +24,7 @@ export default async function DashboardPage({ params }: {
 
   // If no meetings, show empty state
   if (meetings.length === 0) {
-    return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-12rem)]">
-        <Empty
-        >
-          <EmptyHeader>
-            <EmptyMedia variant='icon'>
-              <Video />
-            </EmptyMedia>
-            <EmptyTitle>
-              No meetings yet
-            </EmptyTitle>
-            <EmptyDescription>
-              Start your first meeting to see your dashboard come to life. Install the Chrome extension to get started.
-            </EmptyDescription>
-          </EmptyHeader>
-        </Empty>
-      </div>
-    );
+    return <NoMeetingsEmptyState />;
   }
 
   // Compute stats and data for charts
